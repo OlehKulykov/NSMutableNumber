@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
 # Common settings
   s.name         = "NSMutableNumber"
-  s.version      = "1.0.1"
+  s.version      = "1.0.2"
   s.summary      = "NSMutableNumber - simple mutable NSNumber wrapper"
   s.description  = <<-DESC
 NSMutableNumber - simple mutable NSNumber Objective-C wrapper.

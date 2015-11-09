@@ -111,3 +111,10 @@
 - (BOOL) isEqualToMutableNumber:(nullable NSMutableNumber *) number;
 
 @end
+
+
+@interface NSNumber(NSMutableNumber)
+
+- (nonnull id) mutableCopy;
+
+@end

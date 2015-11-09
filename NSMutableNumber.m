@@ -513,3 +513,15 @@
 #endif
 
 @end
+
+@implementation NSNumber(NSMutableNumber)
+
+- (nonnull id) mutableCopy
+{
+	NSMutableNumber * mutable = [[NSMutableNumber alloc] init];
+	assert(mutable);
+	mutable.num = [self copy];
+	return mutable;
+}
+
+@end
