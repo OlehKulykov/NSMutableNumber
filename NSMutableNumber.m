@@ -23,6 +23,8 @@
 
 #import "NSMutableNumber.h"
 
+NSString * const _Nonnull kNSMutableNumberNullString = @"(null)";
+
 @interface NSMutableNumber()
 
 @property (nonatomic, strong) NSNumber * num;
@@ -209,7 +211,7 @@
 - (NSString * _Nonnull) stringValue
 {
 	NSNumber * n = self.num;
-	return n ? [n stringValue] : @"(null)";
+	return n ? [n stringValue] : kNSMutableNumberNullString;
 }
 
 - (nonnull id) initWithUnsignedLongLong:(unsigned long long) number
@@ -508,7 +510,7 @@
 - (NSString *) description
 {
 	NSNumber * n = self.num;
-	return n ? [n description] : @"(null)";
+	return n ? [n description] : kNSMutableNumberNullString;
 }
 
 #if defined(DEBUG) || defined(_DEBUG)
@@ -517,6 +519,12 @@
 	return [self description];
 }
 #endif
+
+- (nullable NSString *) descriptionWithLocale:(nullable id) locale
+{
+	NSNumber * n = self.num;
+	return n ? [n descriptionWithLocale:locale] : kNSMutableNumberNullString;
+}
 
 @end
 

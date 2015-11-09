@@ -23,6 +23,11 @@
 
 #import <Foundation/Foundation.h>
 
+/**
+ @brief Null string for the number. E.g.: @"(null)".
+ */
+FOUNDATION_EXTERN NSString * const _Nonnull kNSMutableNumberNullString;
+
 
 /**
  @brief Simple wrapper arrount strong NSNumber object.
@@ -111,6 +116,8 @@
 - (BOOL) isEqualToNumber:(nullable NSNumber *) number;
 
 - (BOOL) isEqualToMutableNumber:(nullable NSMutableNumber *) number;
+
+- (nullable NSString *) descriptionWithLocale:(nullable id) locale;
 
 @end
 
