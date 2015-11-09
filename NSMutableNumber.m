@@ -499,4 +499,17 @@
 	return [self isEqualToNumber:number.num];
 }
 
+- (NSString *) description
+{
+	NSNumber * n = self.num;
+	return n ? [n description] : @"(null)";
+}
+
+#if defined(DEBUG) || defined(_DEBUG)
+- (NSString *) debugDescription
+{
+	return [self description];
+}
+#endif
+
 @end
