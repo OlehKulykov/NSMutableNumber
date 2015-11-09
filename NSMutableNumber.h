@@ -59,6 +59,8 @@
 
 @property (nonatomic, assign, readwrite) double doubleValue;
 
+@property (nonatomic, copy, readonly) NSString * _Nonnull stringValue;
+
 - (nonnull id) initWithUnsignedLongLong:(unsigned long long) number;
 + (nonnull NSMutableNumber *) numberWithUnsignedLongLong:(unsigned long long) number;
 

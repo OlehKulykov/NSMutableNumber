@@ -206,6 +206,12 @@
 	return n ? [n unsignedIntegerValue] : 0;
 }
 
+- (NSString * _Nonnull) stringValue
+{
+	NSNumber * n = self.num;
+	return n ? [n stringValue] : @"(null)";
+}
+
 - (nonnull id) initWithUnsignedLongLong:(unsigned long long) number
 {
 	self = [super init];
