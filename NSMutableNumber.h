@@ -23,107 +23,80 @@
 
 #import <Foundation/Foundation.h>
 
-/**
- @brief Null string for the number. E.g.: @"(null)".
- */
-FOUNDATION_EXTERN NSString * const _Nonnull kNSMutableNumberNullString;
+@interface NSMutableNumber : NSObject <NSCopying, NSSecureCoding>
 
+@property (nonatomic, assign, readonly) const char * _Nonnull objCType;
 
-/**
- @brief Simple wrapper arrount strong NSNumber object.
- */
-@interface NSMutableNumber : NSObject <NSCopying>
+- (nonnull instancetype) initWithBytes:(nonnull const void *) value objCType:(nonnull const char *) type;
+
+- (nullable instancetype) initWithCoder:(nullable NSCoder *) decoder;
+
+- (nonnull instancetype) init;
+
+- (nonnull NSMutableNumber *) initWithChar:(char) value;
+- (nonnull NSMutableNumber *) initWithUnsignedChar:(unsigned char) value;
+- (nonnull NSMutableNumber *) initWithShort:(short) value;
+- (nonnull NSMutableNumber *) initWithUnsignedShort:(unsigned short) value;
+- (nonnull NSMutableNumber *) initWithInt:(int) value;
+- (nonnull NSMutableNumber *) initWithUnsignedInt:(unsigned int) value;
+- (nonnull NSMutableNumber *) initWithLong:(long) value;
+- (nonnull NSMutableNumber *) initWithUnsignedLong:(unsigned long) value;
+- (nonnull NSMutableNumber *) initWithLongLong:(long long) value;
+- (nonnull NSMutableNumber *) initWithUnsignedLongLong:(unsigned long long) value;
+- (nonnull NSMutableNumber *) initWithFloat:(float) value;
+- (nonnull NSMutableNumber *) initWithDouble:(double) value;
+- (nonnull NSMutableNumber *) initWithBool:(BOOL) value;
+- (nonnull NSMutableNumber *) initWithInteger:(NSInteger) value;
+- (nonnull NSMutableNumber *) initWithUnsignedInteger:(NSUInteger) value;
 
 @property (nonatomic, assign, readwrite) char charValue;
-
 @property (nonatomic, assign, readwrite) unsigned char unsignedCharValue;
-
 @property (nonatomic, assign, readwrite) short shortValue;
-
 @property (nonatomic, assign, readwrite) unsigned short unsignedShortValue;
-
-@property (nonatomic, assign, readwrite) unsigned int unsignedIntValue;
-
-@property (nonatomic, assign, readwrite) long longValue;
-
-@property (nonatomic, assign, readwrite) unsigned long unsignedLongValue;
-
-@property (nonatomic, assign, readwrite) long long longLongValue;
-
-@property (nonatomic, assign, readwrite) float floatValue;
-
-@property (nonatomic, assign, readwrite) BOOL boolValue;
-
-@property (nonatomic, assign, readwrite) NSInteger integerValue;
-
-@property (nonatomic, assign, readwrite) NSUInteger unsignedIntegerValue;
-
-@property (nonatomic, assign, readwrite) unsigned long long unsignedLongLongValue;
-
 @property (nonatomic, assign, readwrite) int intValue;
-
+@property (nonatomic, assign, readwrite) unsigned int unsignedIntValue;
+@property (nonatomic, assign, readwrite) long longValue;
+@property (nonatomic, assign, readwrite) unsigned long unsignedLongValue;
+@property (nonatomic, assign, readwrite) long long longLongValue;
+@property (nonatomic, assign, readwrite) unsigned long long unsignedLongLongValue;
+@property (nonatomic, assign, readwrite) float floatValue;
 @property (nonatomic, assign, readwrite) double doubleValue;
+@property (nonatomic, assign, readwrite) BOOL boolValue;
+@property (nonatomic, assign, readwrite) NSInteger integerValue;
+@property (nonatomic, assign, readwrite) NSUInteger unsignedIntegerValue;
+@property (nonatomic, readonly, copy) NSString * _Nonnull stringValue;
 
-@property (nonatomic, copy, readonly) NSString * _Nonnull stringValue;
+- (void) getValue:(nonnull void *) value;
 
-- (nonnull id) initWithUnsignedLongLong:(unsigned long long) number;
-+ (nonnull NSMutableNumber *) numberWithUnsignedLongLong:(unsigned long long) number;
+- (NSComparisonResult) compare:(nullable id) otherNumber;
 
-- (nonnull id) initWithInt:(int) number;
-+ (nonnull NSMutableNumber *) numberWithInt:(int) number;
+- (BOOL) isEqualToNumber:(nullable id) number;
 
-- (nonnull id) initWithDouble:(double) number;
-+ (nonnull NSMutableNumber *) numberWithDouble:(double) number;
+- (nonnull NSString *) descriptionWithLocale:(nullable id) locale;
+
+@end
+
+@interface NSMutableNumber(NSMutableNumberCreation)
 
 + (nonnull NSMutableNumber *) numberWithChar:(char) number;
-- (nonnull id) initWithChar:(char) number;
-
 + (nonnull NSMutableNumber *) numberWithUnsignedChar:(unsigned char) number;
-- (nonnull id) initWithUnsignedChar:(unsigned char) number;
-
 + (nonnull NSMutableNumber *) numberWithShort:(short) number;
-- (nonnull id) initWithShort:(short) number;
-
 + (nonnull NSMutableNumber *) numberWithUnsignedShort:(unsigned short) number;
-- (nonnull id) initWithUnsignedShort:(unsigned short) number;
-
++ (nonnull NSMutableNumber *) numberWithInt:(int) number;
 + (nonnull NSMutableNumber *) numberWithUnsignedInt:(unsigned int) number;
-- (nonnull id) initWithUnsignedInt:(unsigned int) number;
-
 + (nonnull NSMutableNumber *) numberWithLong:(long) number;
-- (nonnull id) initWithLong:(long) number;
-
 + (nonnull NSMutableNumber *) numberWithUnsignedLong:(unsigned long) number;
-- (nonnull id) initWithUnsignedLong:(unsigned long) number;
-
 + (nonnull NSMutableNumber *) numberWithLongLong:(long long) number;
-- (nonnull id) initWithLongLong:(long long) number;
-
++ (nonnull NSMutableNumber *) numberWithUnsignedLongLong:(unsigned long long) number;
 + (nonnull NSMutableNumber *) numberWithFloat:(float) number;
-- (nonnull id) initWithFloat:(float) number;
-
++ (nonnull NSMutableNumber *) numberWithDouble:(double) number;
 + (nonnull NSMutableNumber *) numberWithBool:(BOOL) number;
-- (nonnull id) initWithBool:(BOOL) number;
-
 + (nonnull NSMutableNumber *) numberWithInteger:(NSInteger) number;
-- (nonnull id) initWithInteger:(NSInteger) number;
-
 + (nonnull NSMutableNumber *) numberWithUnsignedInteger:(NSUInteger) number;
-- (nonnull id) initWithUnsignedInteger:(NSUInteger) number;
-
-- (NSComparisonResult) compare:(nullable NSNumber *) otherNumber;
-
-- (BOOL) isEqualToNumber:(nullable NSNumber *) number;
-
-- (BOOL) isEqualToMutableNumber:(nullable NSMutableNumber *) number;
-
-- (nullable NSString *) descriptionWithLocale:(nullable id) locale;
 
 @end
 
 
-@interface NSNumber(NSMutableNumber)
-
-- (nonnull id) mutableCopy;
+@interface NSNumber(NSMutableNumberMutableCopy)
 
 @end
