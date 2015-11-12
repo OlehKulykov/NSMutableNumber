@@ -276,7 +276,6 @@ struct number_s
 				return self;
 			}
 		}
-		[self release];
 	}
 	return nil;
 }
@@ -653,21 +652,21 @@ struct number_s
 #pragma mark - NSMutableNumber static initializers
 @implementation NSMutableNumber(NSMutableNumberCreation)
 
-+ (nonnull NSMutableNumber *) numberWithChar:(char) number { return [[[NSMutableNumber alloc] initWithChar:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithUnsignedChar:(unsigned char) number { return [[[NSMutableNumber alloc] initWithUnsignedChar:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithShort:(short) number { return [[[NSMutableNumber alloc] initWithShort:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithUnsignedShort:(unsigned short) number { return [[[NSMutableNumber alloc] initWithUnsignedShort:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithInt:(int) number { return [[[NSMutableNumber alloc] initWithInt:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithUnsignedInt:(unsigned int) number { return [[[NSMutableNumber alloc] initWithUnsignedInt:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithLong:(long) number { return [[[NSMutableNumber alloc] initWithLong:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithUnsignedLong:(unsigned long) number { return [[[NSMutableNumber alloc] initWithUnsignedLong:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithLongLong:(long long) number { return [[[NSMutableNumber alloc] initWithLongLong:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithUnsignedLongLong:(unsigned long long) number { return [[[NSMutableNumber alloc] initWithUnsignedLongLong:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithFloat:(float) number { return [[[NSMutableNumber alloc] initWithFloat:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithDouble:(double) number { return [[[NSMutableNumber alloc] initWithDouble:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithBool:(BOOL) number { return [[[NSMutableNumber alloc] initWithBool:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithInteger:(NSInteger) number { return [[[NSMutableNumber alloc] initWithInteger:number] autorelease]; }
-+ (nonnull NSMutableNumber *) numberWithUnsignedInteger:(NSUInteger) number { return [[[NSMutableNumber alloc] initWithUnsignedInteger:number] autorelease]; }
++ (nonnull NSMutableNumber *) numberWithChar:(char) number { return [[NSMutableNumber alloc] initWithChar:number]; }
++ (nonnull NSMutableNumber *) numberWithUnsignedChar:(unsigned char) number { return [[NSMutableNumber alloc] initWithUnsignedChar:number]; }
++ (nonnull NSMutableNumber *) numberWithShort:(short) number { return [[NSMutableNumber alloc] initWithShort:number]; }
++ (nonnull NSMutableNumber *) numberWithUnsignedShort:(unsigned short) number { return [[NSMutableNumber alloc] initWithUnsignedShort:number]; }
++ (nonnull NSMutableNumber *) numberWithInt:(int) number { return [[NSMutableNumber alloc] initWithInt:number]; }
++ (nonnull NSMutableNumber *) numberWithUnsignedInt:(unsigned int) number { return [[NSMutableNumber alloc] initWithUnsignedInt:number]; }
++ (nonnull NSMutableNumber *) numberWithLong:(long) number { return [[NSMutableNumber alloc] initWithLong:number]; }
++ (nonnull NSMutableNumber *) numberWithUnsignedLong:(unsigned long) number { return [[NSMutableNumber alloc] initWithUnsignedLong:number]; }
++ (nonnull NSMutableNumber *) numberWithLongLong:(long long) number { return [[NSMutableNumber alloc] initWithLongLong:number]; }
++ (nonnull NSMutableNumber *) numberWithUnsignedLongLong:(unsigned long long) number { return [[NSMutableNumber alloc] initWithUnsignedLongLong:number]; }
++ (nonnull NSMutableNumber *) numberWithFloat:(float) number { return [[NSMutableNumber alloc] initWithFloat:number]; }
++ (nonnull NSMutableNumber *) numberWithDouble:(double) number { return [[NSMutableNumber alloc] initWithDouble:number]; }
++ (nonnull NSMutableNumber *) numberWithBool:(BOOL) number { return [[NSMutableNumber alloc] initWithBool:number]; }
++ (nonnull NSMutableNumber *) numberWithInteger:(NSInteger) number { return [[NSMutableNumber alloc] initWithInteger:number]; }
++ (nonnull NSMutableNumber *) numberWithUnsignedInteger:(NSUInteger) number { return [[NSMutableNumber alloc] initWithUnsignedInteger:number]; }
 
 @end
 

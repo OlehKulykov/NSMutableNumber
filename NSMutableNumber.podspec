@@ -19,5 +19,5 @@ NSMutableNumber - mutable number realization, common to NSNumber.
 # Build  
   s.source_files = '*.{h,mm}'
   s.public_header_files = '*.h'
-  s.requires_arc = false
+  s.requires_arc = true
 end
