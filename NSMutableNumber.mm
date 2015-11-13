@@ -216,7 +216,7 @@ struct number_s
 	}
 }
 
-#pragma mark - service getters
+#pragma mark - NSValue, service getters
 - (const char *) objCType
 {
 	return _number.objCtype();
@@ -295,6 +295,27 @@ struct number_s
 - (Class) classForKeyedArchiver
 {
 	return [NSMutableNumber class];
+}
+
+- (id) copy
+{
+	return [self copyWithZone:nil];
+}
+
+- (id) mutableCopy
+{
+	NSMutableNumber * number = [[NSMutableNumber alloc] init];
+	number->_number = _number;
+	return number;
+}
+
+- (BOOL) isKindOfClass:(Class) aClass
+{
+	if (aClass == [NSNumber class] || aClass == [NSValue class])
+	{
+		return YES;
+	}
+	return [super isKindOfClass:aClass];
 }
 
 #pragma mark - NSMutableNumber initializers
@@ -663,7 +684,11 @@ struct number_s
 
 - (NSUInteger) hash
 {
-	return self.stringValue.hash;
+	NSNumber * immutableNumber = nil;
+	if (_number.isUnsigned()) immutableNumber = [NSNumber numberWithUnsignedLongLong:_number.get<unsigned long long>()];
+	else if (_number.isReal()) immutableNumber = [NSNumber numberWithDouble:_number.get<double>()];
+	else immutableNumber = [NSNumber numberWithLongLong:_number.get<long long>()];
+	return [immutableNumber hash];
 }
 
 @end
