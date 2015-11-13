@@ -68,7 +68,14 @@
 
 - (void) getValue:(nonnull void *) value;
 
-- (NSComparisonResult) compare:(nullable id) otherNumber;
+/**
+ @brief Compare with other number object.
+ @param object The number object. Supports @b NSNumber and @b NSMutableNumber object classes.
+ @return Comparation result or @b NSOrderedDescending if parameter is nil or unsupported.
+ @warning If parameter is nil or have unsupported class type than the result is @b NSOrderedDescending bacause
+ left operand is greater than the right, which is nil or unsupported.
+ */
+- (NSComparisonResult) compare:(nullable id) object;
 
 - (BOOL) isEqualToNumber:(nullable id) number;
 

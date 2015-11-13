@@ -23,7 +23,6 @@
 
 #import "NSMutableNumber.h"
 
-
 #define NSMNumberValueTypeU 0
 #define NSMNumberValueTypeI 1
 #define NSMNumberValueTypeR 2
@@ -44,7 +43,7 @@
 #define NSMNumberCType_NSInteger 14
 #define NSMNumberCType_NSUInteger 15
 
-uint8_t NSMNumberCTypeFromEncoded(const char * type)
+NSUInteger NSMNumberCTypeFromEncoded(const char * type)
 {
 	const uint16_t t = *(const uint16_t*)type;
 	/// can't hardcode @encode result, just use in runtime.
@@ -66,7 +65,7 @@ uint8_t NSMNumberCTypeFromEncoded(const char * type)
 	return 0;
 }
 
-uint8_t NSMNumberCTypeIsUnsigned(const uint8_t type)
+FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsUnsigned(const NSUInteger type)
 {
 	switch (type) {
 		case NSMNumberCType_unsigned_long_long:
@@ -81,7 +80,7 @@ uint8_t NSMNumberCTypeIsUnsigned(const uint8_t type)
 	return 0;
 }
 
-uint8_t NSMNumberCTypeIsReal(const uint8_t type)
+FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsReal(const NSUInteger type)
 {
 	return (type == NSMNumberCType_float || type == NSMNumberCType_double) ? 1 : 0;
 }
@@ -625,14 +624,14 @@ struct number_s
 	return NSOrderedDescending;
 }
 
-- (NSComparisonResult) compare:(nullable id) otherNumber
+- (NSComparisonResult) compare:(nullable id) object
 {
-	if (otherNumber && ([otherNumber isKindOfClass:[NSNumber class]] || [otherNumber isKindOfClass:[NSMutableNumber class]]))
+	if (object && ([object isKindOfClass:[NSNumber class]] || [object isKindOfClass:[NSMutableNumber class]]))
 	{
-		const uint8_t type = NSMNumberCTypeFromEncoded([otherNumber objCType]);
-		if (NSMNumberCTypeIsUnsigned(type)) return [self compareWithUnsigned:otherNumber];
-		else if (NSMNumberCTypeIsReal(type)) return [self compareWithReal:otherNumber];
-		return [self compareWithSigned:otherNumber];
+		const NSUInteger type = NSMNumberCTypeFromEncoded([object objCType]);
+		if (NSMNumberCTypeIsUnsigned(type)) return [self compareWithUnsigned:object];
+		else if (NSMNumberCTypeIsReal(type)) return [self compareWithReal:object];
+		return [self compareWithSigned:object];
 	}
 	return NSOrderedDescending; // left operand is greater than the right(nil or unsupported)
 }
@@ -642,9 +641,29 @@ struct number_s
 	return ([self compare:number] == NSOrderedSame);
 }
 
+- (BOOL) isEqual:(id) object
+{
+	return ([self compare:object] == NSOrderedSame);
+}
+
 - (nonnull NSString *) descriptionWithLocale:(nullable id) locale
 {
 	return self.stringValue;
+}
+
+- (NSString *) debugDescription
+{
+	return self.stringValue;
+}
+
+- (NSString *) description
+{
+	return self.stringValue;
+}
+
+- (NSUInteger) hash
+{
+	return self.stringValue.hash;
 }
 
 @end
