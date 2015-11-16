@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
 # Common settings
   s.name         = "NSMutableNumber"
-  s.version      = "1.0.6"
+  s.version      = "1.0.7"
   s.summary      = "NSMutableNumber - mutable number realization, common to NSNumber"
   s.description  = <<-DESC
 NSMutableNumber - mutable number realization, common to NSNumber.

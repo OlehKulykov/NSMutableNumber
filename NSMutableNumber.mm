@@ -22,11 +22,11 @@
 
 
 #import "NSMutableNumber.h"
+#include <pthread.h>
 
 #define NSMNumberValueTypeU 0
 #define NSMNumberValueTypeI 1
 #define NSMNumberValueTypeR 2
-
 #define NSMNumberCType_int 1
 #define NSMNumberCType_long_long 2
 #define NSMNumberCType_unsigned_long_long 3
@@ -43,9 +43,9 @@
 #define NSMNumberCType_NSInteger 14
 #define NSMNumberCType_NSUInteger 15
 
-NSUInteger NSMNumberCTypeFromEncoded(const char * type)
+FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeFromEncoded(const char * type)
 {
-	const uint16_t t = *(const uint16_t*)type;
+	const NSUInteger t = *(const uint16_t*)type;
 	/// can't hardcode @encode result, just use in runtime.
 	if (t == *(const uint16_t*)@encode(int)) return NSMNumberCType_int;
 	else if (t == *(const uint16_t*)@encode(BOOL)) return NSMNumberCType_BOOL;
@@ -82,7 +82,13 @@ FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsUnsigned(const NSUInteger ty
 
 FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsReal(const NSUInteger type)
 {
-	return (type == NSMNumberCType_float || type == NSMNumberCType_double) ? 1 : 0;
+	switch (type) {
+		case NSMNumberCType_float:
+		case NSMNumberCType_double:
+			return 1;
+			break;
+		default: break; }
+	return 0;
 }
 
 struct number_s
@@ -108,21 +114,44 @@ struct number_s
 		uint32_t serviceInfo;
 	};
 
+	pthread_mutex_t _mutex;
+	void lock() { pthread_mutex_lock(&_mutex); }
+	void unlock() { pthread_mutex_unlock(&_mutex); }
+
+	number_s()
+	{
+		pthread_mutexattr_t attr;
+		if (pthread_mutexattr_init(&attr) == 0)
+		{
+			if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) == 0) pthread_mutex_init(&_mutex, &attr);
+			pthread_mutexattr_destroy(&attr);
+		}
+	}
+
+	~number_s()
+	{
+		pthread_mutex_destroy(&_mutex);
+	}
+
 	const char * objCtype() const { return (const char*)type; }
 
-	template<typename T> T get() const
+	template<typename T> T get()
 	{
+		T r = 0;
+		lock();
 		switch (reserved[1]) {
-			case NSMNumberValueTypeU: return (T)data.u; break;
-			case NSMNumberValueTypeI: return (T)data.i; break;
-			case NSMNumberValueTypeR: return (T)data.r; break;
+			case NSMNumberValueTypeU: r = (T)data.u; break;
+			case NSMNumberValueTypeI: r = (T)data.i; break;
+			case NSMNumberValueTypeR: r = (T)data.r; break;
 			default: break;
 		};
-		return 0;
+		unlock();
+		return r;
 	}
 
 	template<typename T> void set(const T & value, const uint8_t type)
 	{
+		lock();
 		reserved[0] = sizeof(T);
 		reserved[1] = type;
 		typeValue = *(const uint16_t*)@encode(T);
@@ -130,12 +159,13 @@ struct number_s
 			case NSMNumberValueTypeU: data.u = value;  break;
 			case NSMNumberValueTypeI: data.i = value;  break;
 			case NSMNumberValueTypeR: data.r = value;  break;
-			default: break;
-		};
+			default: break; };
+		unlock();
 	}
 
-	void getValue(void * value) const
+	void getValue(void * value)
 	{
+		lock();
 		switch (reserved[1]) {
 			case NSMNumberValueTypeU: {
 				switch (reserved[0]) {
@@ -159,12 +189,13 @@ struct number_s
 					case sizeof(double): *(double*)value = this->get<double>(); break;
 					default: break; }
 			} break;
-			default: break;
-		}
+			default: break; }
+		unlock();
 	}
 
-	void copyToString(char * buff, const size_t buffLen) const
+	void copyToString(char * buff, const size_t buffLen)
 	{
+		lock();
 		switch (reserved[1]) {
 			case NSMNumberValueTypeI: snprintf(buff, buffLen, "%lli", data.i); break;
 			case NSMNumberValueTypeU: snprintf(buff, buffLen, "%llu", data.u); break;
@@ -173,10 +204,12 @@ struct number_s
 				else if (reserved[0] == sizeof(double)) snprintf(buff, buffLen, "%.15g", (double)data.r);
 				break;
 			default: strncpy(buff, "(null)", 6); break; }
+		unlock();
 	}
 
-	BOOL isUnsigned() const { return reserved[1] == NSMNumberValueTypeU; }
-	BOOL isReal() const { return reserved[1] == NSMNumberValueTypeR; }
+	BOOL isUnsigned() const { return (reserved[1] == NSMNumberValueTypeU); }
+
+	BOOL isReal() const { return (reserved[1] == NSMNumberValueTypeR); }
 };
 
 @interface NSMutableNumber()
@@ -197,8 +230,10 @@ struct number_s
 #pragma mark - NSCopying
 - (id) copyWithZone:(nullable NSZone *) zone
 {
+	_number.lock();
 	NSMutableNumber * n = [[NSMutableNumber alloc] init];
 	n->_number = _number;
+	_number.unlock();
 	return n;
 }
 
@@ -207,11 +242,14 @@ struct number_s
 {
 	if (coder)
 	{
+		_number.lock();
 		const size_t size1 = sizeof(_number.data);
 		const size_t size2 = sizeof(_number.serviceInfo);
 		uint8_t buff[size1 + size2];
 		memcpy(buff, &_number.data, size1);
 		memcpy(&buff[size1], &_number.serviceInfo, size2);
+		_number.unlock();
+
 		[coder encodeBytes:buff length:size1 + size2 forKey:@"b"];
 	}
 }
@@ -304,9 +342,44 @@ struct number_s
 
 - (id) mutableCopy
 {
+	_number.lock();
 	NSMutableNumber * number = [[NSMutableNumber alloc] init];
 	number->_number = _number;
+	_number.unlock();
 	return number;
+}
+
+- (nonnull NSNumber *) immutableCopy
+{
+	NSNumber * immutableNumber = nil;
+	_number.lock();
+	if (_number.isUnsigned())
+	{
+		switch (_number.reserved[0]) {
+			case sizeof(unsigned char): immutableNumber = [[NSNumber alloc] initWithUnsignedChar:_number.get<unsigned char>()]; break;
+			case sizeof(unsigned short): immutableNumber = [[NSNumber alloc] initWithUnsignedShort:_number.get<unsigned short>()]; break;
+			case sizeof(unsigned long): immutableNumber = [[NSNumber alloc] initWithUnsignedLong:_number.get<unsigned long>()]; break;
+			case sizeof(unsigned long long): immutableNumber = [[NSNumber alloc] initWithUnsignedLongLong:_number.get<unsigned long long>()]; break;
+			default: break; }
+	}
+	else if (_number.isReal())
+	{
+		switch (_number.reserved[0]) {
+			case sizeof(float): immutableNumber = [[NSNumber alloc] initWithFloat:_number.get<float>()]; break;
+			case sizeof(double): immutableNumber = [[NSNumber alloc] initWithDouble:_number.get<double>()]; break;
+			default: break; }
+	}
+	else
+	{
+		switch (_number.reserved[0]) {
+			case sizeof(char): immutableNumber = [[NSNumber alloc] initWithChar:_number.get<char>()]; break;
+			case sizeof(short): immutableNumber = [[NSNumber alloc] initWithShort:_number.get<short>()]; break;
+			case sizeof(long): immutableNumber = [[NSNumber alloc] initWithLong:_number.get<long>()]; break;
+			case sizeof(long long): immutableNumber = [[NSNumber alloc] initWithLongLong:_number.get<long long>()]; break;
+			default: break; }
+	}
+	_number.unlock();
+	return immutableNumber;
 }
 
 - (BOOL) isKindOfClass:(Class) aClass
@@ -647,14 +720,17 @@ struct number_s
 
 - (NSComparisonResult) compare:(nullable id) object
 {
+	NSComparisonResult r = NSOrderedDescending; // left operand is greater than the right(nil or unsupported)
+	_number.lock();
 	if (object && ([object isKindOfClass:[NSNumber class]] || [object isKindOfClass:[NSMutableNumber class]]))
 	{
 		const NSUInteger type = NSMNumberCTypeFromEncoded([object objCType]);
-		if (NSMNumberCTypeIsUnsigned(type)) return [self compareWithUnsigned:object];
-		else if (NSMNumberCTypeIsReal(type)) return [self compareWithReal:object];
-		return [self compareWithSigned:object];
+		if (NSMNumberCTypeIsUnsigned(type)) r = [self compareWithUnsigned:object];
+		else if (NSMNumberCTypeIsReal(type)) r = [self compareWithReal:object];
+		r = [self compareWithSigned:object];
 	}
-	return NSOrderedDescending; // left operand is greater than the right(nil or unsupported)
+	_number.unlock();
+	return r;
 }
 
 - (BOOL) isEqualToNumber:(nullable id) number
@@ -684,11 +760,7 @@ struct number_s
 
 - (NSUInteger) hash
 {
-	NSNumber * immutableNumber = nil;
-	if (_number.isUnsigned()) immutableNumber = [NSNumber numberWithUnsignedLongLong:_number.get<unsigned long long>()];
-	else if (_number.isReal()) immutableNumber = [NSNumber numberWithDouble:_number.get<double>()];
-	else immutableNumber = [NSNumber numberWithLongLong:_number.get<long long>()];
-	return [immutableNumber hash];
+	return [[self immutableCopy] hash];
 }
 
 @end
