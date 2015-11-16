@@ -355,28 +355,22 @@ struct number_s
 	_number.lock();
 	if (_number.isUnsigned())
 	{
-		switch (_number.reserved[0]) {
-			case sizeof(unsigned char): immutableNumber = [[NSNumber alloc] initWithUnsignedChar:_number.get<unsigned char>()]; break;
-			case sizeof(unsigned short): immutableNumber = [[NSNumber alloc] initWithUnsignedShort:_number.get<unsigned short>()]; break;
-			case sizeof(unsigned int): immutableNumber = [[NSNumber alloc] initWithUnsignedInt:_number.get<unsigned int>()]; break;
-			case sizeof(unsigned long long): immutableNumber = [[NSNumber alloc] initWithUnsignedLongLong:_number.get<unsigned long long>()]; break;
-			default: break; }
+		if (_number.reserved[0] == sizeof(unsigned char)) immutableNumber = [[NSNumber alloc] initWithUnsignedChar:_number.get<unsigned char>()];
+		else if (_number.reserved[0] == sizeof(unsigned short)) immutableNumber = [[NSNumber alloc] initWithUnsignedShort:_number.get<unsigned short>()];
+		else if (_number.reserved[0] == sizeof(unsigned int)) immutableNumber = [[NSNumber alloc] initWithUnsignedInt:_number.get<unsigned int>()];
+		else immutableNumber = [[NSNumber alloc] initWithUnsignedLongLong:_number.get<unsigned long long>()];
 	}
 	else if (_number.isReal())
 	{
-		switch (_number.reserved[0]) {
-			case sizeof(float): immutableNumber = [[NSNumber alloc] initWithFloat:_number.get<float>()]; break;
-			case sizeof(double): immutableNumber = [[NSNumber alloc] initWithDouble:_number.get<double>()]; break;
-			default: break; }
+		if (_number.reserved[0] == sizeof(float)) immutableNumber = [[NSNumber alloc] initWithFloat:_number.get<float>()];
+		else immutableNumber = [[NSNumber alloc] initWithDouble:_number.get<double>()];
 	}
 	else
 	{
-		switch (_number.reserved[0]) {
-			case sizeof(char): immutableNumber = [[NSNumber alloc] initWithChar:_number.get<char>()]; break;
-			case sizeof(short): immutableNumber = [[NSNumber alloc] initWithShort:_number.get<short>()]; break;
-			case sizeof(int): immutableNumber = [[NSNumber alloc] initWithInt:_number.get<int>()]; break;
-			case sizeof(long long): immutableNumber = [[NSNumber alloc] initWithLongLong:_number.get<long long>()]; break;
-			default: break; }
+		if (_number.reserved[0] == sizeof(char)) immutableNumber = [[NSNumber alloc] initWithChar:_number.get<char>()];
+		else if (_number.reserved[0] == sizeof(short)) immutableNumber = [[NSNumber alloc] initWithShort:_number.get<short>()];
+		else if (_number.reserved[0] == sizeof(int)) immutableNumber = [[NSNumber alloc] initWithInt:_number.get<int>()];
+		else immutableNumber = [[NSNumber alloc] initWithLongLong:_number.get<long long>()];
 	}
 	_number.unlock();
 	return immutableNumber;
