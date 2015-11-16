@@ -3,9 +3,9 @@ Pod::Spec.new do |s|
 # Common settings
   s.name         = "NSMutableNumber"
   s.version      = "1.0.9"
-  s.summary      = "NSMutableNumber - mutable number realization, common to NSNumber"
+  s.summary      = "NSMutableNumber - full thread safe mutable NSNumber implementation"
   s.description  = <<-DESC
-NSMutableNumber - mutable number realization, common to NSNumber.
+NSMutableNumber - full thread safe mutable NSNumber implementation.
                       DESC
   s.homepage     = "https://github.com/OlehKulykov/NSMutableNumber"
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
