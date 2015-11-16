@@ -358,7 +358,7 @@ struct number_s
 		switch (_number.reserved[0]) {
 			case sizeof(unsigned char): immutableNumber = [[NSNumber alloc] initWithUnsignedChar:_number.get<unsigned char>()]; break;
 			case sizeof(unsigned short): immutableNumber = [[NSNumber alloc] initWithUnsignedShort:_number.get<unsigned short>()]; break;
-			case sizeof(unsigned long): immutableNumber = [[NSNumber alloc] initWithUnsignedLong:_number.get<unsigned long>()]; break;
+			case sizeof(unsigned int): immutableNumber = [[NSNumber alloc] initWithUnsignedInt:_number.get<unsigned int>()]; break;
 			case sizeof(unsigned long long): immutableNumber = [[NSNumber alloc] initWithUnsignedLongLong:_number.get<unsigned long long>()]; break;
 			default: break; }
 	}
@@ -374,7 +374,7 @@ struct number_s
 		switch (_number.reserved[0]) {
 			case sizeof(char): immutableNumber = [[NSNumber alloc] initWithChar:_number.get<char>()]; break;
 			case sizeof(short): immutableNumber = [[NSNumber alloc] initWithShort:_number.get<short>()]; break;
-			case sizeof(long): immutableNumber = [[NSNumber alloc] initWithLong:_number.get<long>()]; break;
+			case sizeof(int): immutableNumber = [[NSNumber alloc] initWithInt:_number.get<int>()]; break;
 			case sizeof(long long): immutableNumber = [[NSNumber alloc] initWithLongLong:_number.get<long long>()]; break;
 			default: break; }
 	}
