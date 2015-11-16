@@ -3,7 +3,7 @@
 
 
 # NSMutableNumber
-NSMutableNumber - simple mutable NSNumber Objective-C wrapper
+NSMutableNumber - full thread safe mutable NSNumber implementation
 
 
 ### Installation with CocoaPods
