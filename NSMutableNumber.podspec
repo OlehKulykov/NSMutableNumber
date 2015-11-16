@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
 # Common settings
   s.name         = "NSMutableNumber"
-  s.version      = "1.0.8"
+  s.version      = "1.0.9"
   s.summary      = "NSMutableNumber - mutable number realization, common to NSNumber"
   s.description  = <<-DESC
 NSMutableNumber - mutable number realization, common to NSNumber.
@@ -20,4 +20,5 @@ NSMutableNumber - mutable number realization, common to NSNumber.
   s.source_files = '*.{h,mm}'
   s.public_header_files = '*.h'
   s.requires_arc = true
+  s.libraries = 'pthread', 'stdc++'
 end
