@@ -114,6 +114,14 @@ struct number_s
 		uint32_t serviceInfo;
 	};
 
+	void copyDataToNumber(struct number_s * number)
+	{
+		number->data = data;
+		number->typeValue = typeValue;
+		number->reservedValue = reservedValue;
+		number->serviceInfo = serviceInfo;
+	}
+
 	pthread_mutex_t _mutex;
 	void lock() { pthread_mutex_lock(&_mutex); }
 	void unlock() { pthread_mutex_unlock(&_mutex); }
@@ -232,7 +240,7 @@ struct number_s
 {
 	_number.lock();
 	NSMutableNumber * n = [[NSMutableNumber alloc] init];
-	n->_number = _number;
+	_number.copyDataToNumber(&n->_number);
 	_number.unlock();
 	return n;
 }
@@ -344,7 +352,7 @@ struct number_s
 {
 	_number.lock();
 	NSMutableNumber * number = [[NSMutableNumber alloc] init];
-	number->_number = _number;
+	_number.copyDataToNumber(&number->_number);
 	_number.unlock();
 	return number;
 }
