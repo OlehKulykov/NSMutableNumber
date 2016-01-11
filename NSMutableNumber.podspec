@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
 # Common settings
   s.name         = "NSMutableNumber"
-  s.version      = "1.0.10"
+  s.version      = "1.0.11"
   s.summary      = "NSMutableNumber - full thread safe mutable NSNumber implementation"
   s.description  = <<-DESC
 NSMutableNumber - full thread safe mutable NSNumber implementation.
@@ -13,8 +13,10 @@ NSMutableNumber - full thread safe mutable NSNumber implementation.
   s.source       = { :git => 'https://github.com/OlehKulykov/NSMutableNumber.git', :tag => s.version.to_s }
 
 # Platforms
-  s.ios.deployment_target = "5.0"
+  s.ios.deployment_target = "7.0"
   s.osx.deployment_target = "10.7"
+  s.watchos.deployment_target = '2.0'
+  s.tvos.deployment_target = '9.0'
 
 # Build  
   s.source_files = '*.{h,mm}'
