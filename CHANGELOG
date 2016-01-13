@@ -1,0 +1,18 @@
+Changes on version 1.0.12 (current):
+- Number compare fix.
+
+Changes on version 1.0.7:
+- Thread safe C++ implementation.
+
+Changes on version 1.0.5:
+- Static initialisers.
+- ARC support.
+
+Changes on version 1.0.3:
+- String value getter.
+
+Changes on version 1.0.2:
+- mutableCopy implementation.
+
+Changes on version 1.0.0:
+- Initial logic based on NSNumber.
