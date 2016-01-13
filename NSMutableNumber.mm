@@ -729,7 +729,7 @@ struct number_s
 		const NSUInteger type = NSMNumberCTypeFromEncoded([object objCType]);
 		if (NSMNumberCTypeIsUnsigned(type)) r = [self compareWithUnsigned:object];
 		else if (NSMNumberCTypeIsReal(type)) r = [self compareWithReal:object];
-		r = [self compareWithSigned:object];
+		else r = [self compareWithSigned:object];
 	}
 	_number.unlock();
 	return r;
