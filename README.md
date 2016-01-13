@@ -9,5 +9,5 @@ NSMutableNumber - full thread safe mutable NSNumber implementation
 ### Installation with CocoaPods
 #### Podfile
 ```ruby
-pod 'NSMutableNumber', '~> 1.0'
+pod 'NSMutableNumber'
 ```
