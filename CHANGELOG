@@ -1,4 +1,7 @@
-Changes on version 1.0.12 (current):
+Changes on version 1.0.13 (current):
+- Add tests XCode project.
+
+Changes on version 1.0.12:
 - Number compare fix.
 
 Changes on version 1.0.7:
