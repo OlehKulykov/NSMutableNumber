@@ -25,6 +25,29 @@
     [super tearDown];
 }
 
+- (void) testUseAsNSNumber
+{
+	NSNumber * num = (NSNumber *)[[NSMutableNumber alloc] initWithInt:0];
+	XCTAssertEqual([num isKindOfClass:[NSNumber class]], YES);
+
+	XCTAssertEqual([num charValue], 0);
+	XCTAssertEqual([num unsignedCharValue], 0);
+	XCTAssertEqual([num shortValue], 0);
+	XCTAssertEqual([num unsignedShortValue], 0);
+	XCTAssertEqual([num intValue], 0);
+	XCTAssertEqual([num unsignedIntValue], 0);
+	XCTAssertEqual([num longValue], 0);
+	XCTAssertEqual([num unsignedLongValue], 0);
+	XCTAssertEqual([num longLongValue], 0);
+	XCTAssertEqual([num unsignedLongLongValue], 0);
+	XCTAssertEqual([num floatValue], 0);
+	XCTAssertEqual([num doubleValue], 0);
+	XCTAssertEqual([num boolValue], 0);
+	XCTAssertEqual([num integerValue], 0);
+	XCTAssertEqual([num unsignedIntegerValue], 0);
+	XCTAssertEqual([[num stringValue] isEqualToString:@"0"], YES);
+}
+
 - (void) testIsKindOfClass
 {
 	NSMutableNumber * mut = [[NSMutableNumber alloc] init];
@@ -37,8 +60,8 @@
 
 - (void) testEqualToNumber
 {
-	XCTAssertEqual([[NSNumber numberWithInt:0] isEqualToNumber:[NSMutableNumber numberWithInt:0]], YES);
-	XCTAssertEqual([[NSNumber numberWithUnsignedLongLong:ULLONG_MAX] isEqualToNumber:[NSMutableNumber numberWithUnsignedLongLong:ULLONG_MAX]], YES);
+	XCTAssertEqual([[NSNumber numberWithInt:0] isEqualToNumber:(NSNumber *)[NSMutableNumber numberWithInt:0]], YES);
+	XCTAssertEqual([[NSNumber numberWithUnsignedLongLong:ULLONG_MAX] isEqualToNumber:(NSNumber *)[NSMutableNumber numberWithUnsignedLongLong:ULLONG_MAX]], YES);
 }
 
 - (void) testHash
