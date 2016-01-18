@@ -184,6 +184,7 @@
 		for (int i = 0; i < 10000; i++)
 		{
 			NSMutableNumber * n = [[NSMutableNumber alloc] initWithUnsignedInteger:1];
+			XCTAssert(n);
 			n = nil;
 		}
 	}];
@@ -196,7 +197,9 @@
 		{
 			NSNumber * n1 = [[NSNumber alloc] initWithUnsignedInteger:1];
 			NSNumber * n2 = [[NSNumber alloc] initWithDouble:1];
-			[n1 compare:n2];
+			XCTAssert(n1);
+			XCTAssert(n2);
+			XCTAssert([n1 compare:n2] == NSOrderedSame);
 		}
 	}];
 }
@@ -208,7 +211,9 @@
 		{
 			NSMutableNumber * n1 = [[NSMutableNumber alloc] initWithUnsignedInteger:1];
 			NSMutableNumber * n2 = [[NSMutableNumber alloc] initWithDouble:1];
-			[n1 compare:n2];
+			XCTAssert(n1);
+			XCTAssert(n2);
+			XCTAssert([n1 compare:n2] == NSOrderedSame);
 		}
 	}];
 }
