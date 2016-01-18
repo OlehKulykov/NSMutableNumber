@@ -1,10 +1,4 @@
-//
-//  MNTests.m
-//  MNTests
-//
-//  Created by Resident evil on 11/11/15.
-//  Copyright © 2015 Oleh Kulykov. All rights reserved.
-//
+
 
 #import <XCTest/XCTest.h>
 #import "NSMutableNumber.h"
@@ -25,34 +19,177 @@
     [super tearDown];
 }
 
+- (void) testIncDec
+{
+	NSMutableNumber * mutable = [[NSMutableNumber alloc] initWithInt:0];
+	XCTAssertNotNil(mutable);
+
+	mutable.intValue++;
+	XCTAssertEqual(mutable.intValue, 1);
+	XCTAssertEqual(mutable.unsignedLongLongValue, 1);
+	XCTAssertEqual(mutable.boolValue, YES);
+
+	mutable.intValue--;
+	XCTAssertEqual(mutable.intValue, 0);
+	XCTAssertEqual(mutable.unsignedIntValue, 0);
+	XCTAssertEqual(mutable.boolValue, NO);
+
+	mutable.intValue--;
+	XCTAssertEqual(mutable.intValue, -1);
+	XCTAssertEqual(mutable.charValue, -1);
+}
+
+- (void) testEqualMixedTypes
+{
+	XCTAssertEqualObjects([NSMutableNumber numberWithBool:NO], [NSNumber numberWithChar:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithChar:CHAR_MIN], [NSNumber numberWithInteger:CHAR_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithInt:INT_MIN], [NSNumber numberWithLongLong:INT_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithInteger:NSIntegerMin], [NSNumber numberWithLongLong:NSIntegerMin]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithLong:LONG_MIN], [NSNumber numberWithLongLong:LONG_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithLongLong:LONG_LONG_MIN], [NSNumber numberWithLongLong:LONG_LONG_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithShort:SHRT_MIN], [NSNumber numberWithInt:SHRT_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedChar:0], [NSNumber numberWithLong:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedInt:0], [NSNumber numberWithInt:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedInteger:0], [NSNumber numberWithUnsignedLongLong:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedLong:0], [NSNumber numberWithShort:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedLongLong:0], [NSNumber numberWithChar:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedShort:0], [NSNumber numberWithShort:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithBool:YES], [NSNumber numberWithFloat:1]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithChar:CHAR_MAX], [NSNumber numberWithUnsignedChar:CHAR_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithInt:INT_MAX], [NSNumber numberWithUnsignedInt:INT_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithInteger:NSIntegerMax], [NSNumber numberWithUnsignedLongLong:NSIntegerMax]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithLong:LONG_MAX], [NSNumber numberWithUnsignedLong:LONG_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithLongLong:LONG_LONG_MAX], [NSNumber numberWithUnsignedLongLong:LONG_LONG_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithShort:SHRT_MAX], [NSNumber numberWithInt:SHRT_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedChar:UCHAR_MAX], [NSNumber numberWithShort:UCHAR_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedInt:UINT_MAX], [NSNumber numberWithUnsignedLongLong:UINT_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedInteger:NSUIntegerMax], [NSNumber numberWithUnsignedLongLong:NSUIntegerMax]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedShort:USHRT_MAX], [NSNumber numberWithInt:USHRT_MAX]);
+}
+
+- (void) testEqualNumbersMinRange
+{
+	XCTAssertEqualObjects([NSMutableNumber numberWithBool:NO], [NSNumber numberWithBool:NO]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithChar:CHAR_MIN], [NSNumber numberWithChar:CHAR_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithDouble:DBL_MIN], [NSNumber numberWithDouble:DBL_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithFloat:FLT_MIN], [NSNumber numberWithFloat:FLT_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithInt:INT_MIN], [NSNumber numberWithInt:INT_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithInteger:NSIntegerMin], [NSNumber numberWithInteger:NSIntegerMin]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithLong:LONG_MIN], [NSNumber numberWithLong:LONG_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithLongLong:LONG_LONG_MIN], [NSNumber numberWithLongLong:LONG_LONG_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithShort:SHRT_MIN], [NSNumber numberWithShort:SHRT_MIN]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedChar:0], [NSNumber numberWithUnsignedChar:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedInt:0], [NSNumber numberWithUnsignedInt:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedInteger:0], [NSNumber numberWithUnsignedInteger:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedLong:0], [NSNumber numberWithUnsignedLong:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedLongLong:0], [NSNumber numberWithUnsignedLongLong:0]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedShort:0], [NSNumber numberWithUnsignedShort:0]);
+}
+
+- (void) testEqualNumbersMaxRange
+{
+	XCTAssertEqualObjects([NSMutableNumber numberWithBool:YES], [NSNumber numberWithBool:YES]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithChar:CHAR_MAX], [NSNumber numberWithChar:CHAR_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithDouble:DBL_MAX], [NSNumber numberWithDouble:DBL_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithFloat:FLT_MAX], [NSNumber numberWithFloat:FLT_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithInt:INT_MAX], [NSNumber numberWithInt:INT_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithInteger:NSIntegerMax], [NSNumber numberWithInteger:NSIntegerMax]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithLong:LONG_MAX], [NSNumber numberWithLong:LONG_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithLongLong:LONG_LONG_MAX], [NSNumber numberWithLongLong:LONG_LONG_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithShort:SHRT_MAX], [NSNumber numberWithShort:SHRT_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedChar:UCHAR_MAX], [NSNumber numberWithUnsignedChar:UCHAR_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedInt:UINT_MAX], [NSNumber numberWithUnsignedInt:UINT_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedInteger:NSUIntegerMax], [NSNumber numberWithUnsignedInteger:NSUIntegerMax]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedLong:ULONG_MAX], [NSNumber numberWithUnsignedLong:ULONG_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedLongLong:ULONG_LONG_MAX], [NSNumber numberWithUnsignedLongLong:ULONG_LONG_MAX]);
+	XCTAssertEqualObjects([NSMutableNumber numberWithUnsignedShort:USHRT_MAX], [NSNumber numberWithUnsignedShort:USHRT_MAX]);
+}
+
+- (void) testEqualNumbersUnsigned
+{
+	NSMutableNumber * mutable = [[NSMutableNumber alloc] initWithInt:1];
+	XCTAssertNotNil(mutable);
+
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithBool:YES]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithInt:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithChar:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithDouble:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithFloat:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithInteger:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithLong:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithLongLong:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithUnsignedChar:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithUnsignedInt:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithUnsignedLong:1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithUnsignedShort:1]);
+}
+
+- (void) testEqualNumbersSigned
+{
+	NSMutableNumber * mutable = [[NSMutableNumber alloc] initWithInt:-1];
+	XCTAssertNotNil(mutable);
+
+	XCTAssertNotEqualObjects(mutable, [NSNumber numberWithBool:NO]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithInt:-1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithChar:-1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithDouble:-1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithFloat:-1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithInteger:-1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithLong:-1]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithLongLong:-1]);
+	XCTAssertNotEqualObjects(mutable, [NSNumber numberWithUnsignedChar:-1]);
+	XCTAssertNotEqualObjects(mutable, [NSNumber numberWithUnsignedInt:-1]);
+	XCTAssertNotEqualObjects(mutable, [NSNumber numberWithUnsignedLong:-1]);
+	XCTAssertNotEqualObjects(mutable, [NSNumber numberWithUnsignedShort:-1]);
+}
+
+- (void) testEqualNumbersByZero
+{
+	NSMutableNumber * mutable = [[NSMutableNumber alloc] initWithInt:0];
+	XCTAssertNotNil(mutable);
+
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithBool:NO]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithInt:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithChar:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithDouble:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithFloat:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithInteger:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithLong:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithLongLong:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithUnsignedChar:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithUnsignedInt:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithUnsignedLong:0]);
+	XCTAssertEqualObjects(mutable, [NSNumber numberWithUnsignedShort:0]);
+}
+
 - (void) testUseAsNSNumber
 {
-	NSNumber * num = (NSNumber *)[[NSMutableNumber alloc] initWithInt:0];
-	XCTAssertEqual([num isKindOfClass:[NSNumber class]], YES);
+	NSNumber * number = (NSNumber *)[[NSMutableNumber alloc] initWithInt:0];
+	XCTAssertEqual([number isKindOfClass:[NSNumber class]], YES);
 
-	XCTAssertEqual([num charValue], 0);
-	XCTAssertEqual([num unsignedCharValue], 0);
-	XCTAssertEqual([num shortValue], 0);
-	XCTAssertEqual([num unsignedShortValue], 0);
-	XCTAssertEqual([num intValue], 0);
-	XCTAssertEqual([num unsignedIntValue], 0);
-	XCTAssertEqual([num longValue], 0);
-	XCTAssertEqual([num unsignedLongValue], 0);
-	XCTAssertEqual([num longLongValue], 0);
-	XCTAssertEqual([num unsignedLongLongValue], 0);
-	XCTAssertEqual([num floatValue], 0);
-	XCTAssertEqual([num doubleValue], 0);
-	XCTAssertEqual([num boolValue], 0);
-	XCTAssertEqual([num integerValue], 0);
-	XCTAssertEqual([num unsignedIntegerValue], 0);
-	XCTAssertEqual([[num stringValue] isEqualToString:@"0"], YES);
+	XCTAssertEqual([number charValue], 0);
+	XCTAssertEqual([number unsignedCharValue], 0);
+	XCTAssertEqual([number shortValue], 0);
+	XCTAssertEqual([number unsignedShortValue], 0);
+	XCTAssertEqual([number intValue], 0);
+	XCTAssertEqual([number unsignedIntValue], 0);
+	XCTAssertEqual([number longValue], 0);
+	XCTAssertEqual([number unsignedLongValue], 0);
+	XCTAssertEqual([number longLongValue], 0);
+	XCTAssertEqual([number unsignedLongLongValue], 0);
+	XCTAssertEqual([number floatValue], 0);
+	XCTAssertEqual([number doubleValue], 0);
+	XCTAssertEqual([number boolValue], 0);
+	XCTAssertEqual([number integerValue], 0);
+	XCTAssertEqual([number unsignedIntegerValue], 0);
+	XCTAssertEqual([[number stringValue] isEqualToString:@"0"], YES);
 }
 
 - (void) testIsKindOfClass
 {
-	NSMutableNumber * mut = [[NSMutableNumber alloc] init];
-	XCTAssertEqual([mut isKindOfClass:[NSNumber class]], YES);
-	XCTAssertEqual([mut isKindOfClass:[NSMutableNumber class]], YES);
+	NSMutableNumber * mutableNumber = [[NSMutableNumber alloc] init];
+	XCTAssertEqual([mutableNumber isKindOfClass:[NSNumber class]], YES);
+	XCTAssertEqual([mutableNumber isKindOfClass:[NSMutableNumber class]], YES);
 
 	XCTAssertEqual([[[NSNumber numberWithBool:YES] mutableCopy] isKindOfClass:[NSNumber class]], YES);
 	XCTAssertEqual([[[NSNumber numberWithBool:YES] mutableCopy] isKindOfClass:[NSMutableNumber class]], YES);
@@ -70,7 +207,8 @@
 	XCTAssertEqual([[NSNumber numberWithBool:NO] hash], [[NSMutableNumber numberWithBool:NO] hash]);
 
 	XCTAssertEqual([[NSNumber numberWithUnsignedLongLong:ULLONG_MAX] hash], [[NSMutableNumber numberWithUnsignedLongLong:ULLONG_MAX] hash]);
-
+	XCTAssertEqual([[NSNumber numberWithInt:-1] hash], [[NSMutableNumber numberWithInt:-1] hash]);
+	XCTAssertEqual([[NSNumber numberWithInt:2] hash], [[NSMutableNumber numberWithShort:2] hash]);
 }
 
 - (void)testExample

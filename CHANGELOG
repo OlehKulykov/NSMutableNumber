@@ -1,4 +1,7 @@
-Changes on version 1.0.14 (current):
+Changes on version 1.0.15 (current):
+- Update all tests, documentation and usage.
+
+Changes on version 1.0.14:
 - Add tests XCode project.
 
 Changes on version 1.0.12:

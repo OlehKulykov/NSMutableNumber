@@ -27,12 +27,37 @@
 /**
  @brief Mutable version of the NSNumber.
  @detailed 
- <li> This class inherits all @b NSNumber protocols and overrides required methods for duplicate @b NSNumber functionality.
- <li> All getters is thread safe. Used recursive mutex for get/set values.
+ <li> This class inherits all @b NSNumber protocols and overrides required methods for duplicate @b NSNumber read functionality.
+ @code
+	NSNumber * number = (NSNumber *)[[NSMutableNumber alloc] initWithInt:0];
+	// use actual number NSMutableNumber class as NSNumber, of couce read only
+ @endcode
+ <li> All getters are thread safe. Can be used for cross-thread synchronization. Used recursive mutex for get/set values.
  <li> Same hash method as on @b NSNumber object - required for using as key with key/value coding classes.
  <li> Detected as kind of @b NSNumber or @b NSValue class.
- <li> Can be compared with self or @b NSNumber class.
- <li> @b NSNumber can compared with this class via number comparator method @b isEqualToNumber:
+ @code
+	NSMutableNumber * mutableNumber = [[NSMutableNumber alloc] init];
+	[mutableNumber isKindOfClass:[NSNumber class]]; // YES, is kind of class
+	[mutableNumber isKindOfClass:[NSMutableNumber class]]; // YES, is kind of class
+ @endcode
+ <li> Can be compared with self(eg. @b NSMutableNumber) or @b NSNumber class.
+ Comparation checks both numbers for real, signed and unsigned value and selects required method for comparing between values.
+ @code
+	[[NSMutableNumber numberWithBool:NO] isEqual:[NSNumber numberWithBool:NO]]; // YES, equal
+	[[NSMutableNumber numberWithBool:YES] isEqual:[NSNumber numberWithFloat:1]]; // YES, equal
+	[[NSMutableNumber numberWithDouble:DBL_MAX] isEqual:[NSNumber numberWithDouble:DBL_MAX]]; // YES, equal
+	[[NSMutableNumber numberWithChar:CHAR_MIN] isEqual:[NSNumber numberWithInteger:CHAR_MIN]]; // YES, equal
+	[[NSMutableNumber numberWithUnsignedShort:USHRT_MAX] isEqual:[NSNumber numberWithInt:USHRT_MAX]]; // YES, equal
+ @endcode
+ <li> Works with maximum and minimum type value ranges.
+ @code
+	[[NSMutableNumber numberWithInt:INT_MIN] isEqual:[NSNumber numberWithInt:INT_MIN]]; // YES, equal
+	[[NSMutableNumber numberWithInteger:NSIntegerMin] isEqual:[NSNumber numberWithInteger:NSIntegerMin]]; // YES, equal
+	[[NSMutableNumber numberWithUnsignedInteger:NSUIntegerMax] isEqual:[NSNumber numberWithUnsignedInteger:NSUIntegerMax]]; // YES, equal
+	[[NSMutableNumber numberWithUnsignedLongLong:ULONG_LONG_MAX] isEqual:[NSNumber numberWithUnsignedLongLong:ULONG_LONG_MAX]]; // YES, equal
+ @endcode
+ <li> Internal logic implemented with C++. Same performance as standart @b NSNumber (see time tests) and minimum ammount of memory for storing values(eg. unions).
+ <li> @b NSNumber can be compared with this class via additional number comparator method @b isEqualToNumber:
  */
 @interface NSMutableNumber : NSObject <NSCopying, NSSecureCoding>
 
