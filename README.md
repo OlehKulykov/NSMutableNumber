@@ -29,18 +29,18 @@ pod 'NSMutableNumber'
 - Can be compared with self(eg. **NSMutableNumber**) or **NSNumber** class.
  Comparation checks both numbers for real, signed and unsigned value and selects required method for comparing between values.
 ```objc
-	[NSMutableNumber numberWithBool:NO], [NSNumber numberWithBool:NO]; // equal
-	[NSMutableNumber numberWithBool:YES], [NSNumber numberWithFloat:1]; // equal
-	[NSMutableNumber numberWithDouble:DBL_MAX], [NSNumber numberWithDouble:DBL_MAX]; // equal
-	[NSMutableNumber numberWithChar:CHAR_MIN], [NSNumber numberWithInteger:CHAR_MIN]; // equal
-	[NSMutableNumber numberWithUnsignedShort:USHRT_MAX], [NSNumber numberWithInt:USHRT_MAX]; // equal
+	[[NSMutableNumber numberWithBool:NO] isEqual:[NSNumber numberWithBool:NO]]; // YES, equal
+	[[NSMutableNumber numberWithBool:YES] isEqual:[NSNumber numberWithFloat:1]]; // YES, equal
+	[[NSMutableNumber numberWithDouble:DBL_MAX] isEqual:[NSNumber numberWithDouble:DBL_MAX]]; // YES, equal
+	[[NSMutableNumber numberWithChar:CHAR_MIN] isEqual:[NSNumber numberWithInteger:CHAR_MIN]]; // YES, equal
+	[[NSMutableNumber numberWithUnsignedShort:USHRT_MAX] isEqual:[NSNumber numberWithInt:USHRT_MAX]]; // YES, equal
 ```
 - Works with maximum and minimum type value ranges.
 ```objc
-	[NSMutableNumber numberWithInt:INT_MIN], [NSNumber numberWithInt:INT_MIN]; // equal
-	[NSMutableNumber numberWithInteger:NSIntegerMin], [NSNumber numberWithInteger:NSIntegerMin]; // equal
-	[NSMutableNumber numberWithUnsignedInteger:NSUIntegerMax], [NSNumber numberWithUnsignedInteger:NSUIntegerMax]; // equal
-	[NSMutableNumber numberWithUnsignedLongLong:ULONG_LONG_MAX], [NSNumber numberWithUnsignedLongLong:ULONG_LONG_MAX]; // equal
+	[[NSMutableNumber numberWithInt:INT_MIN] isEqual:[NSNumber numberWithInt:INT_MIN]]; // YES, equal
+	[[NSMutableNumber numberWithInteger:NSIntegerMin] isEqual:[NSNumber numberWithInteger:NSIntegerMin]]; // YES, equal
+	[[NSMutableNumber numberWithUnsignedInteger:NSUIntegerMax] isEqual:[NSNumber numberWithUnsignedInteger:NSUIntegerMax]]; // YES, equal
+	[[NSMutableNumber numberWithUnsignedLongLong:ULONG_LONG_MAX] isEqual:[NSNumber numberWithUnsignedLongLong:ULONG_LONG_MAX]]; // YES, equal
 ```
 - Internal logic implemented with C++. Same performance as standart **NSNumber** (see time tests) and minimum ammount of memory for storing values(eg. unions).
 - **NSNumber** can be compared with this class via additional number comparator method **isEqualToNumber:**
