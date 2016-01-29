@@ -48,8 +48,7 @@
 
 FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeFromEncoded(const char * type)
 {
-	const NSUInteger t = *(const uint16_t*)type;
-	/// can't hardcode @encode result, just use in runtime.
+	const NSUInteger t = *(const uint16_t*)type; /// can't hardcode @encode result, just use in runtime.
 	if (t == *(const uint16_t*)@encode(int)) return NSMNumberCType_int;
 	else if (t == *(const uint16_t*)@encode(BOOL)) return NSMNumberCType_BOOL;
 	else if (t == *(const uint16_t*)@encode(double)) return NSMNumberCType_double;
@@ -70,8 +69,7 @@ FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeFromEncoded(const char * type)
 
 FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsUnsigned(const NSUInteger type)
 {
-	switch (type)
-	{
+	switch (type) {
 		case NSMNumberCType_unsigned_long_long:
 		case NSMNumberCType_unsigned_char:
 		case NSMNumberCType_unsigned_short:
@@ -80,45 +78,38 @@ FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsUnsigned(const NSUInteger ty
 		case NSMNumberCType_NSUInteger:
 			return 1;
 			break;
-		default: break;
-	}
+		default: break; }
 	return 0;
 }
 
 FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsReal(const NSUInteger type)
 {
-	switch (type)
-	{
+	switch (type) {
 		case NSMNumberCType_float:
 		case NSMNumberCType_double:
 			return 1;
 			break;
-		default: break;
-	}
+		default: break; }
 	return 0;
 }
 
 struct number_s
 {
-	union // data
-	{
+	union { // data
 		double r;
 		int64_t i;
 		uint64_t u;
 		BOOL b;
 	} data;
 
-	union // service info
-	{
+	union { // service info
 		struct
 		{
-			union // objCtype
-			{
+			union { // objCtype
 				int8_t type[2];
 				uint16_t typeValue;
 			};
-			union // value type
-			{
+			union { // value type
 				uint8_t reserved[2];
 				uint16_t reservedValue;
 			};
@@ -148,10 +139,7 @@ struct number_s
 		}
 	}
 
-	~number_s()
-	{
-		pthread_mutex_destroy(&_mutex);
-	}
+	~number_s() { pthread_mutex_destroy(&_mutex); }
 
 	const char * objCtype() const { return (const char*)type; }
 
@@ -159,13 +147,11 @@ struct number_s
 	{
 		T r = 0;
 		lock();
-		switch (reserved[1])
-		{
+		switch (reserved[1]) {
 			case NSMNumberValueTypeU: r = (T)data.u; break;
 			case NSMNumberValueTypeI: r = (T)data.i; break;
 			case NSMNumberValueTypeR: r = (T)data.r; break;
-			default: break;
-		};
+			default: break; }
 		unlock();
 		return r;
 	}
@@ -176,13 +162,11 @@ struct number_s
 		reserved[0] = sizeof(T);
 		reserved[1] = type;
 		typeValue = *(const uint16_t*)@encode(T);
-		switch (type)
-		{
+		switch (type) {
 			case NSMNumberValueTypeU: data.u = value;  break;
 			case NSMNumberValueTypeI: data.i = value;  break;
 			case NSMNumberValueTypeR: data.r = value;  break;
-			default: break;
-		};
+			default: break; }
 		unlock();
 	}
 
@@ -193,38 +177,29 @@ struct number_s
 		{
 			case NSMNumberValueTypeU:
 			{
-				switch (reserved[0])
-				{
+				switch (reserved[0]) {
 					case sizeof(uint8_t): *(uint8_t*)value = this->get<uint8_t>(); break;
 					case sizeof(uint16_t): *(uint16_t*)value = this->get<uint16_t>(); break;
 					case sizeof(uint32_t): *(uint32_t*)value = this->get<uint32_t>(); break;
 					case sizeof(uint64_t): *(uint64_t*)value = this->get<uint64_t>(); break;
-					default: break;
-				}
+					default: break; }
 			} break;
-
 			case NSMNumberValueTypeI:
 			{
-				switch (reserved[0])
-				{
+				switch (reserved[0]) {
 					case sizeof(int8_t): *(int8_t*)value = this->get<int8_t>(); break;
 					case sizeof(int16_t): *(int16_t*)value = this->get<int16_t>(); break;
 					case sizeof(int32_t): *(int32_t*)value = this->get<int32_t>(); break;
 					case sizeof(int64_t): *(int64_t*)value = this->get<int64_t>(); break;
-					default: break;
-				}
+					default: break; }
 			} break;
-
 			case NSMNumberValueTypeR:
 			{
-				switch (reserved[0])
-				{
+				switch (reserved[0]) {
 					case sizeof(float): *(float*)value = this->get<float>(); break;
 					case sizeof(double): *(double*)value = this->get<double>(); break;
-					default: break;
-				}
+					default: break; }
 			} break;
-
 			default: break;
 		}
 		unlock();
@@ -233,16 +208,14 @@ struct number_s
 	void copyToString(char * buff, const size_t buffLen)
 	{
 		lock();
-		switch (reserved[1])
-		{
+		switch (reserved[1]) {
 			case NSMNumberValueTypeI: snprintf(buff, buffLen, "%lli", data.i); break;
 			case NSMNumberValueTypeU: snprintf(buff, buffLen, "%llu", data.u); break;
 			case NSMNumberValueTypeR:
 				if (reserved[0] == sizeof(float)) snprintf(buff, buffLen, "%.6g", (float)data.r);
 				else if (reserved[0] == sizeof(double)) snprintf(buff, buffLen, "%.15g", (double)data.r);
 				break;
-			default: strncpy(buff, "(null)", 6); break;
-		}
+			default: strncpy(buff, "(null)", 6); break; }
 		unlock();
 	}
 
@@ -252,8 +225,7 @@ struct number_s
 
 	void setWithBytesAndObjCType(const void * value, const char * type)
 	{
-		switch (NSMNumberCTypeFromEncoded(type))
-		{
+		switch (NSMNumberCTypeFromEncoded(type)) {
 			case NSMNumberCType_int: this->set<int>(*(const int*)value, NSMNumberValueTypeI); break;
 			case NSMNumberCType_char: this->set<char>(*(const char*)value, NSMNumberValueTypeI); break;
 			case NSMNumberCType_double: this->set<double>(*(const double*)value, NSMNumberValueTypeR); break;
@@ -269,10 +241,8 @@ struct number_s
 			case NSMNumberCType_unsigned_int: this->set<unsigned int>(*(const unsigned int*)value, NSMNumberValueTypeU); break;
 			case NSMNumberCType_long: this->set<long>(*(const long*)value, NSMNumberValueTypeI); break;
 			case NSMNumberCType_unsigned_long: this->set<unsigned long>(*(const unsigned long*)value, NSMNumberValueTypeU); break;
-			default: break;
-		}
+			default: break; }
 	}
 };
-
 
 #endif 
