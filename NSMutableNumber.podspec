@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
 # Common settings
   s.name         = "NSMutableNumber"
-  s.version      = "1.1.0"
+  s.version      = "1.1.1"
   s.summary      = "NSMutableNumber - full thread safe mutable NSNumber implementation"
   s.description  = <<-DESC
 NSMutableNumber - full thread safe mutable NSNumber implementation.
