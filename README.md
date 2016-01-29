@@ -42,8 +42,9 @@ pod 'NSMutableNumber'
 	[[NSMutableNumber numberWithUnsignedInteger:NSUIntegerMax] isEqual:[NSNumber numberWithUnsignedInteger:NSUIntegerMax]]; // YES, equal
 	[[NSMutableNumber numberWithUnsignedLongLong:ULONG_LONG_MAX] isEqual:[NSNumber numberWithUnsignedLongLong:ULONG_LONG_MAX]]; // YES, equal
 ```
-- Internal logic implemented with C++. Same performance as standart **NSNumber** (see time tests) and minimum ammount of memory for storing values(eg. unions).
+- Internal logic implemented with C++. Same performance as standart **NSNumber** (see time tests) and minimum ammount of memory for storing values(used union's).
 - **NSNumber** can be compared with this class via additional number comparator method **isEqualToNumber:**
+- Category of the **NSNumber** with method **mutableCopy** which return **NSMutableNumber** class.
 
 
 # License
