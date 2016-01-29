@@ -31,6 +31,7 @@
 /* Begin PBXFileReference section */
 		3D7B01EB1BF4A48100741B06 /* NSMutableNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSMutableNumber.h; path = ../../NSMutableNumber.h; sourceTree = "<group>"; };
 		3D7B01EC1BF4A48100741B06 /* NSMutableNumber.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NSMutableNumber.mm; path = ../../NSMutableNumber.mm; sourceTree = "<group>"; };
+		3D80B6661C5AEACF00F0C938 /* NSMutableNumber.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = NSMutableNumber.hpp; path = ../../NSMutableNumber.hpp; sourceTree = "<group>"; };
 		3D9B1BFE1BF33C4F00C7CBA5 /* tests.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = tests.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D9B1C021BF33C4F00C7CBA5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3D9B1C041BF33C4F00C7CBA5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -85,6 +86,7 @@
 		3D9B1C001BF33C4F00C7CBA5 /* MN */ = {
 			isa = PBXGroup;
 			children = (
+				3D80B6661C5AEACF00F0C938 /* NSMutableNumber.hpp */,
 				3D7B01EB1BF4A48100741B06 /* NSMutableNumber.h */,
 				3D7B01EC1BF4A48100741B06 /* NSMutableNumber.mm */,
 				3D9B1C041BF33C4F00C7CBA5 /* AppDelegate.h */,

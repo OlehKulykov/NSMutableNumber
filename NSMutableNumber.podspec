@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
 # Common settings
   s.name         = "NSMutableNumber"
-  s.version      = "1.0.15"
+  s.version      = "1.1.0"
   s.summary      = "NSMutableNumber - full thread safe mutable NSNumber implementation"
   s.description  = <<-DESC
 NSMutableNumber - full thread safe mutable NSNumber implementation.
@@ -19,7 +19,7 @@ NSMutableNumber - full thread safe mutable NSNumber implementation.
   s.tvos.deployment_target = '9.0'
 
 # Build  
-  s.source_files = '*.{h,mm}'
+  s.source_files = '*.{h,hpp,mm}'
   s.public_header_files = '*.h'
   s.requires_arc = true
   s.libraries = 'pthread', 'stdc++'

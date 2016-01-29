@@ -1,4 +1,7 @@
-Changes on version 1.0.15 (current):
+Changes on version 1.1.0 (current):
+- Split C++ and Objective-C implementation.
+
+Changes on version 1.0.15:
 - Update all tests, documentation and usage.
 
 Changes on version 1.0.14:

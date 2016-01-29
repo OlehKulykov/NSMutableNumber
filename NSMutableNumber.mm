@@ -22,203 +22,7 @@
 
 
 #import "NSMutableNumber.h"
-#include <pthread.h>
-
-#define NSMNumberValueTypeU 0
-#define NSMNumberValueTypeI 1
-#define NSMNumberValueTypeR 2
-#define NSMNumberCType_int 1
-#define NSMNumberCType_long_long 2
-#define NSMNumberCType_unsigned_long_long 3
-#define NSMNumberCType_char 4
-#define NSMNumberCType_unsigned_char 5
-#define NSMNumberCType_short 6
-#define NSMNumberCType_unsigned_short 7
-#define NSMNumberCType_unsigned_int 8
-#define NSMNumberCType_long 9
-#define NSMNumberCType_unsigned_long 10
-#define NSMNumberCType_float 11
-#define NSMNumberCType_double 12
-#define NSMNumberCType_BOOL 13
-#define NSMNumberCType_NSInteger 14
-#define NSMNumberCType_NSUInteger 15
-
-FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeFromEncoded(const char * type)
-{
-	const NSUInteger t = *(const uint16_t*)type;
-	/// can't hardcode @encode result, just use in runtime.
-	if (t == *(const uint16_t*)@encode(int)) return NSMNumberCType_int;
-	else if (t == *(const uint16_t*)@encode(BOOL)) return NSMNumberCType_BOOL;
-	else if (t == *(const uint16_t*)@encode(double)) return NSMNumberCType_double;
-	else if (t == *(const uint16_t*)@encode(float)) return NSMNumberCType_float;
-	else if (t == *(const uint16_t*)@encode(char)) return NSMNumberCType_char;
-	else if (t == *(const uint16_t*)@encode(NSInteger)) return NSMNumberCType_NSInteger;
-	else if (t == *(const uint16_t*)@encode(NSUInteger)) return NSMNumberCType_NSUInteger;
-	else if (t == *(const uint16_t*)@encode(long long)) return NSMNumberCType_long_long;
-	else if (t == *(const uint16_t*)@encode(unsigned long long)) return NSMNumberCType_unsigned_long_long;
-	else if (t == *(const uint16_t*)@encode(unsigned char)) return NSMNumberCType_unsigned_char;
-	else if (t == *(const uint16_t*)@encode(short)) return NSMNumberCType_short;
-	else if (t == *(const uint16_t*)@encode(unsigned short)) return NSMNumberCType_unsigned_short;
-	else if (t == *(const uint16_t*)@encode(unsigned int)) return NSMNumberCType_unsigned_int;
-	else if (t == *(const uint16_t*)@encode(long)) return NSMNumberCType_long;
-	else if (t == *(const uint16_t*)@encode(unsigned long)) return NSMNumberCType_unsigned_long;
-	return 0;
-}
-
-FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsUnsigned(const NSUInteger type)
-{
-	switch (type) {
-		case NSMNumberCType_unsigned_long_long:
-		case NSMNumberCType_unsigned_char:
-		case NSMNumberCType_unsigned_short:
-		case NSMNumberCType_unsigned_int:
-		case NSMNumberCType_unsigned_long:
-		case NSMNumberCType_NSUInteger:
-			return 1;
-			break;
-		default: break; }
-	return 0;
-}
-
-FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsReal(const NSUInteger type)
-{
-	switch (type) {
-		case NSMNumberCType_float:
-		case NSMNumberCType_double:
-			return 1;
-			break;
-		default: break; }
-	return 0;
-}
-
-struct number_s
-{
-	union { // data
-		double r;
-		int64_t i;
-		uint64_t u;
-		BOOL b;
-	} data;
-
-	union { // service info
-		struct {
-			union { // objCtype
-				int8_t type[2];
-				uint16_t typeValue;
-			};
-			union { // value type
-				uint8_t reserved[2];
-				uint16_t reservedValue;
-			};
-		};
-		uint32_t serviceInfo;
-	};
-
-	void copyDataToNumber(struct number_s * number)
-	{
-		number->data = data;
-		number->typeValue = typeValue;
-		number->reservedValue = reservedValue;
-		number->serviceInfo = serviceInfo;
-	}
-
-	pthread_mutex_t _mutex;
-	void lock() { pthread_mutex_lock(&_mutex); }
-	void unlock() { pthread_mutex_unlock(&_mutex); }
-
-	number_s()
-	{
-		pthread_mutexattr_t attr;
-		if (pthread_mutexattr_init(&attr) == 0)
-		{
-			if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) == 0) pthread_mutex_init(&_mutex, &attr);
-			pthread_mutexattr_destroy(&attr);
-		}
-	}
-
-	~number_s()
-	{
-		pthread_mutex_destroy(&_mutex);
-	}
-
-	const char * objCtype() const { return (const char*)type; }
-
-	template<typename T> T get()
-	{
-		T r = 0;
-		lock();
-		switch (reserved[1]) {
-			case NSMNumberValueTypeU: r = (T)data.u; break;
-			case NSMNumberValueTypeI: r = (T)data.i; break;
-			case NSMNumberValueTypeR: r = (T)data.r; break;
-			default: break;
-		};
-		unlock();
-		return r;
-	}
-
-	template<typename T> void set(const T & value, const uint8_t type)
-	{
-		lock();
-		reserved[0] = sizeof(T);
-		reserved[1] = type;
-		typeValue = *(const uint16_t*)@encode(T);
-		switch (type) {
-			case NSMNumberValueTypeU: data.u = value;  break;
-			case NSMNumberValueTypeI: data.i = value;  break;
-			case NSMNumberValueTypeR: data.r = value;  break;
-			default: break; };
-		unlock();
-	}
-
-	void getValue(void * value)
-	{
-		lock();
-		switch (reserved[1]) {
-			case NSMNumberValueTypeU: {
-				switch (reserved[0]) {
-					case sizeof(uint8_t): *(uint8_t*)value = this->get<uint8_t>(); break;
-					case sizeof(uint16_t): *(uint16_t*)value = this->get<uint16_t>(); break;
-					case sizeof(uint32_t): *(uint32_t*)value = this->get<uint32_t>(); break;
-					case sizeof(uint64_t): *(uint64_t*)value = this->get<uint64_t>(); break;
-					default: break; }
-			} break;
-			case NSMNumberValueTypeI: {
-				switch (reserved[0]) {
-					case sizeof(int8_t): *(int8_t*)value = this->get<int8_t>(); break;
-					case sizeof(int16_t): *(int16_t*)value = this->get<int16_t>(); break;
-					case sizeof(int32_t): *(int32_t*)value = this->get<int32_t>(); break;
-					case sizeof(int64_t): *(int64_t*)value = this->get<int64_t>(); break;
-					default: break; }
-			} break;
-			case NSMNumberValueTypeR: {
-				switch (reserved[0]) {
-					case sizeof(float): *(float*)value = this->get<float>(); break;
-					case sizeof(double): *(double*)value = this->get<double>(); break;
-					default: break; }
-			} break;
-			default: break; }
-		unlock();
-	}
-
-	void copyToString(char * buff, const size_t buffLen)
-	{
-		lock();
-		switch (reserved[1]) {
-			case NSMNumberValueTypeI: snprintf(buff, buffLen, "%lli", data.i); break;
-			case NSMNumberValueTypeU: snprintf(buff, buffLen, "%llu", data.u); break;
-			case NSMNumberValueTypeR:
-				if (reserved[0] == sizeof(float)) snprintf(buff, buffLen, "%.6g", (float)data.r);
-				else if (reserved[0] == sizeof(double)) snprintf(buff, buffLen, "%.15g", (double)data.r);
-				break;
-			default: strncpy(buff, "(null)", 6); break; }
-		unlock();
-	}
-
-	BOOL isUnsigned() const { return (reserved[1] == NSMNumberValueTypeU); }
-
-	BOOL isReal() const { return (reserved[1] == NSMNumberValueTypeR); }
-};
+#include "NSMutableNumber.hpp"
 
 @interface NSMutableNumber()
 {
@@ -251,13 +55,11 @@ struct number_s
 	if (coder)
 	{
 		_number.lock();
-		const size_t size1 = sizeof(_number.data);
-		const size_t size2 = sizeof(_number.serviceInfo);
+		const size_t size1 = sizeof(_number.data), size2 = sizeof(_number.serviceInfo);
 		uint8_t buff[size1 + size2];
 		memcpy(buff, &_number.data, size1);
 		memcpy(&buff[size1], &_number.serviceInfo, size2);
 		_number.unlock();
-
 		[coder encodeBytes:buff length:size1 + size2 forKey:@"b"];
 	}
 }
@@ -281,24 +83,7 @@ struct number_s
 	{
 		NSParameterAssert(value);
 		NSParameterAssert(type);
-
-		switch (NSMNumberCTypeFromEncoded(type)) {
-			case NSMNumberCType_int: _number.set<int>(*(const int*)value, NSMNumberValueTypeI); break;
-			case NSMNumberCType_char: _number.set<char>(*(const char*)value, NSMNumberValueTypeI); break;
-			case NSMNumberCType_double: _number.set<double>(*(const double*)value, NSMNumberValueTypeR); break;
-			case NSMNumberCType_float: _number.set<float>(*(const float*)value, NSMNumberValueTypeR); break;
-			case NSMNumberCType_BOOL: _number.set<char>((*(const BOOL*)value) ? (char)1 : (char)0, NSMNumberValueTypeI); break;
-			case NSMNumberCType_NSInteger: _number.set<NSInteger>(*(const NSInteger*)value, NSMNumberValueTypeI); break;
-			case NSMNumberCType_NSUInteger: _number.set<NSUInteger>(*(const NSUInteger*)value, NSMNumberValueTypeU); break;
-			case NSMNumberCType_long_long: _number.set<long long>(*(const long long*)value, NSMNumberValueTypeI); break;
-			case NSMNumberCType_unsigned_long_long: _number.set<unsigned long long>(*(const unsigned long long*)value, NSMNumberValueTypeU); break;
-			case NSMNumberCType_unsigned_char: _number.set<unsigned char>(*(const unsigned char*)value, NSMNumberValueTypeU); break;
-			case NSMNumberCType_short: _number.set<short>(*(const short*)value, NSMNumberValueTypeI); break;
-			case NSMNumberCType_unsigned_short: _number.set<unsigned short>(*(const unsigned short*)value, NSMNumberValueTypeU); break;
-			case NSMNumberCType_unsigned_int: _number.set<unsigned int>(*(const unsigned int*)value, NSMNumberValueTypeU); break;
-			case NSMNumberCType_long: _number.set<long>(*(const long*)value, NSMNumberValueTypeI); break;
-			case NSMNumberCType_unsigned_long: _number.set<unsigned long>(*(const unsigned long*)value, NSMNumberValueTypeU); break;
-			default: break; }
+		_number.setWithBytesAndObjCType(value, type);
 	}
 	return self;
 }
@@ -386,11 +171,7 @@ struct number_s
 
 - (BOOL) isKindOfClass:(Class) aClass
 {
-	if (aClass == [NSNumber class] || aClass == [NSValue class])
-	{
-		return YES;
-	}
-	return [super isKindOfClass:aClass];
+	return (aClass == [NSNumber class] || aClass == [NSValue class]) ? YES : [super isKindOfClass:aClass];
 }
 
 #pragma mark - NSMutableNumber initializers
@@ -622,7 +403,6 @@ struct number_s
 
 - (BOOL) boolValue
 {
-	/// check any contained value(casted to longes signed integer) is zero.
 	return (_number.get<long long>() == 0) ? NO : YES;
 }
 
@@ -665,19 +445,13 @@ struct number_s
 	{
 		if (right < 0) return NSOrderedDescending; // right is negative, while self is positive
 		const unsigned long long left = _number.get<unsigned long long>();
-		if (left == right)
-		{
-			return NSOrderedSame;
-		}
+		if (left == right) return NSOrderedSame;
 		else if (left < right) return NSOrderedAscending;
 	}
 	else
 	{
 		const long long left = _number.get<long long>();
-		if (left == right)
-		{
-			return NSOrderedSame;
-		}
+		if (left == right) return NSOrderedSame;
 		else if (left < right) return NSOrderedAscending;
 	}
 	return NSOrderedDescending;
@@ -689,20 +463,14 @@ struct number_s
 	if (_number.isUnsigned())
 	{
 		const unsigned long long left = _number.get<unsigned long long>();
-		if (left == right)
-		{
-			return NSOrderedSame;
-		}
+		if (left == right) return NSOrderedSame;
 		else if (left < right) return NSOrderedAscending;
 	}
 	else
 	{
 		const long long left = _number.get<long long>();
 		if (left < 0) return NSOrderedAscending; // self is negative, while right is positive
-		if (right == left)
-		{
-			return NSOrderedSame;
-		}
+		if (right == left) return NSOrderedSame;
 		else if (right > left) return NSOrderedAscending;
 	}
 	return NSOrderedDescending;
@@ -712,10 +480,7 @@ struct number_s
 {
 	const double left = _number.get<double>();
 	const double right = [otherNumber doubleValue];
-	if (left == right)
-	{
-		return NSOrderedSame;
-	}
+	if (left == right) return NSOrderedSame;
 	else if (left < right) return NSOrderedAscending;
 	return NSOrderedDescending;
 }
