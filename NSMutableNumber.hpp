@@ -93,8 +93,9 @@ FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsReal(const NSUInteger type)
 	return 0;
 }
 
-struct number_s
+class NSMPCNumber
 {
+public:
 	union { // data
 		double r;
 		int64_t i;
@@ -117,7 +118,7 @@ struct number_s
 		uint32_t serviceInfo;
 	};
 
-	void copyDataToNumber(struct number_s * number)
+	void copyDataToNumber(NSMPCNumber * number)
 	{
 		number->data = data;
 		number->typeValue = typeValue;
@@ -129,7 +130,7 @@ struct number_s
 	void lock() { pthread_mutex_lock(&_mutex); }
 	void unlock() { pthread_mutex_unlock(&_mutex); }
 
-	number_s()
+	NSMPCNumber()
 	{
 		pthread_mutexattr_t attr;
 		if (pthread_mutexattr_init(&attr) == 0)
@@ -139,7 +140,7 @@ struct number_s
 		}
 	}
 
-	~number_s() { pthread_mutex_destroy(&_mutex); }
+	~NSMPCNumber() { pthread_mutex_destroy(&_mutex); }
 
 	const char * objCtype() const { return (const char*)type; }
 

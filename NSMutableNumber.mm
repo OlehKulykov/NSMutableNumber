@@ -27,7 +27,7 @@
 @interface NSMutableNumber()
 {
 @private
-	struct number_s _number;
+	NSMPCNumber _number;
 }
 @end
 
