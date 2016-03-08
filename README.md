@@ -1,5 +1,6 @@
 [![CocoaPods](https://img.shields.io/cocoapods/p/NSMutableNumber.svg?style=flat)](https://cocoapods.org/pods/NSMutableNumber)
 [![CocoaPods](https://img.shields.io/cocoapods/v/NSMutableNumber.svg?style=flat)](https://cocoapods.org/pods/NSMutableNumber)
+[![Build Status](https://travis-ci.org/OlehKulykov/NSMutableNumber.svg?branch=master)](https://travis-ci.org/OlehKulykov/NSMutableNumber)
 
 
 # NSMutableNumber
