@@ -2,6 +2,7 @@
 [![Version](https://img.shields.io/cocoapods/v/NSMutableNumber.svg?style=flat)](http://cocoapods.org/pods/NSMutableNumber)
 [![License](https://img.shields.io/cocoapods/l/NSMutableNumber.svg?style=flat)](http://cocoapods.org/pods/NSMutableNumber)
 [![Build Status](https://travis-ci.org/OlehKulykov/NSMutableNumber.svg?branch=master)](https://travis-ci.org/OlehKulykov/NSMutableNumber)
+[![OnlineDocumentation Status](https://img.shields.io/badge/online%20documentation-generated-brightgreen.svg)](http://cocoadocs.org/docsets/NSMutableNumber)
 
 
 # NSMutableNumber
