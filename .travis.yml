@@ -1,19 +1,19 @@
 language: objective-c
 osx_image: xcode7.3
 xcode_sdk: iphonesimulator9.3
+
 install:
 - gem install xcpretty --no-rdoc --no-ri --no-document
 - gem install jazzy --no-rdoc --no-ri --no-document
+
 script:
 - xcrun swift -version
 - open -b com.apple.iphonesimulator
-- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests
-  -destination 'platform=iOS Simulator,name=iPhone 4s,OS=8.4' | xcpretty -c
-- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests
-  -destination 'platform=iOS Simulator,name=iPhone 6,OS=9.0' | xcpretty -c
-- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests
-  -destination 'platform=iOS Simulator,name=iPhone 6 Plus,OS=9.3' | xcpretty -c
+#- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests -destination 'platform=iOS Simulator,name=iPhone 4s,OS=8.4' | xcpretty -c
+#- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests -destination 'platform=iOS Simulator,name=iPhone 6,OS=9.0' | xcpretty -c
+#- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests -destination 'platform=iOS Simulator,name=iPhone 6 Plus,OS=9.3' | xcpretty -c
 - ./generate_docs.sh
+
 env:
   global:
   - secure: BEt2lBuZVQhXy+iiiYr15GzLyF43DJ36i0m+r6adj+cL182NIOsZU7Nmi+c9CiNc11VkJnUo9lF3HRBw1PRp5VZjsJVsomndtGeEcmlRQHyW7jwipSLsn2z4RZfg6jbbHOLyYy+540wK9a+G9Iv2RtuV93Rc4S5mCc4WRySXxF+qHGTJlnzWdELQg/yZzkCfAAFyNO6hL7adFORyb1G5O2Soz3ug/VCE3IrWKT6irpjixXKmBcYVCSt6yg3wQk4L9Nu2cPgMHorbmZCZox/uj7EEh/TAAmfN0507tjnmCAKMe+j7ATon+TaNiG0AQJ+sG7Ex6ZNRrrxPtuS315aw7ObSSZns86dD0zIQyfBx8VG9x54top9HU3fEIQ6DDexBVuxqEApbdDPd9WcTAGvrRWXRwPstW4p2uN8o3RvPhGB0HTdWOZT5PQboj+zSrH6rVHf06AqIYmgkFKqMwbpo7nORrP/rBMn8hKt9V6qVDeibQieJE0Y4GWBh4jrOFlYgN5z6QiP/0yaKL4RV280bDAKkFUNWsmTPczO0GQ5t5YFxHmiQOhxC1r9t/HlEcncKhJAXLvtyoPWivWPpcq18Kz16pJen9KOAz5SKXlg5vJ60nMh/YObnYxRS8VKqiXeKjI+1oZWwviRwjkxcx5ByS+23Yqceqz7rBNob9OKt9QA=
