@@ -1,15 +1,21 @@
 language: objective-c
-
-xcode_project: tests/tests.xcodeproj
-xcode_scheme: tests
-
-# current
-osx_image: xcode7.2
-xcode_sdk: iphonesimulator9.2
-
-#matrix:
-#  include:
-#    # beta
-#    - os: osx
-#      osx_image: xcode7.3
-#      xcode_sdk: iphonesimulator9.3
+osx_image: xcode7.3
+xcode_sdk: iphonesimulator9.3
+install:
+- gem install xcpretty --no-rdoc --no-ri --no-document
+- gem install jazzy --no-rdoc --no-ri --no-document
+script:
+- xcrun swift -version
+- open -b com.apple.iphonesimulator
+- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests
+  -destination 'platform=iOS Simulator,name=iPhone 4s,OS=8.4' | xcpretty -c
+- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests
+  -destination 'platform=iOS Simulator,name=iPhone 6,OS=9.0' | xcpretty -c
+- set -o pipefail && xcodebuild test -project tests/tests.xcodeproj -scheme tests
+  -destination 'platform=iOS Simulator,name=iPhone 6 Plus,OS=9.3' | xcpretty -c
+- ./generate_docs.sh
+env:
+  global:
+  - secure: BEt2lBuZVQhXy+iiiYr15GzLyF43DJ36i0m+r6adj+cL182NIOsZU7Nmi+c9CiNc11VkJnUo9lF3HRBw1PRp5VZjsJVsomndtGeEcmlRQHyW7jwipSLsn2z4RZfg6jbbHOLyYy+540wK9a+G9Iv2RtuV93Rc4S5mCc4WRySXxF+qHGTJlnzWdELQg/yZzkCfAAFyNO6hL7adFORyb1G5O2Soz3ug/VCE3IrWKT6irpjixXKmBcYVCSt6yg3wQk4L9Nu2cPgMHorbmZCZox/uj7EEh/TAAmfN0507tjnmCAKMe+j7ATon+TaNiG0AQJ+sG7Ex6ZNRrrxPtuS315aw7ObSSZns86dD0zIQyfBx8VG9x54top9HU3fEIQ6DDexBVuxqEApbdDPd9WcTAGvrRWXRwPstW4p2uN8o3RvPhGB0HTdWOZT5PQboj+zSrH6rVHf06AqIYmgkFKqMwbpo7nORrP/rBMn8hKt9V6qVDeibQieJE0Y4GWBh4jrOFlYgN5z6QiP/0yaKL4RV280bDAKkFUNWsmTPczO0GQ5t5YFxHmiQOhxC1r9t/HlEcncKhJAXLvtyoPWivWPpcq18Kz16pJen9KOAz5SKXlg5vJ60nMh/YObnYxRS8VKqiXeKjI+1oZWwviRwjkxcx5ByS+23Yqceqz7rBNob9OKt9QA=
+  - secure: tFRqSXOLOWXm8Omxz/vjje13Mmgms+VJiW7XFQOlcp/ASGfrfz9WNQA02t0s9UYPhDS7y7cX5bWBZtzAFaxtTr1WP9XxwvzM/CaiVd+gFi5r0H43FDCGGvUxlw+kfx320r2geDHwBAYtWiy0XAud2AnZz6WVWKbyuF4SVEEx+4236ySbCZBnnCw1jhZoOVx4AhD8bD1659p9yGywdO45jjqpTkxzhfpuJQHYaJiLPZx2/5NyyM/HlqyLQOL/IH8MISqSuw6pXn2KG/IzA6fxldp28RVEFp32mcmsHR8jVyP/c1e9COoZBk2SK54Yh/YqqcFokFUiSYJUPz34yPe61PQ1CY1R7rskS3m7Xx6KWE7hSKOAugoFP6/YX7IasaEEzkySfeBXNlUXtIze8In4zW3S528IicrHMEiSG67w+Wq369vo7TdgJ+FcGsmpmi0K9XJzFRJ7tRMc9Kyb3zjR24BcPR2D3KG2QlBRAD+PnsoAl0/uDSNCcydG09liGvZDuWP/AztbY9heKmEGd/GKouKwXPjiDn7GVR0P/78LsZy85Wb/GqncRh0klv3OEH1GLQlJVpYC7aWuemlc0O8F7JvsvWGP+F+o2gWes59p0C7I0bLqxovxjfJ+9+dkU91g5ndhzJhB+LhjKTNJJD6zGhy+4dlY7NdQaQQtjEa+Hh0=
+  - secure: HSkd8QOkApWVj1pBV6u72NrkBi9/9TmpNNzAvi8nQSWWGT+d3ptBnRoY/EsIpwULJ0fciKA9YkkT0teNzwctsaYwttFOOGxun4/GXjxnQVVWaddpXufVBbMpKKqJyEP8PPLrnPDRj4BxbW95wxYFlrat/ktkDXZXtdNdrVZ/dltITWayhrfyGXEL0A0wV0nB1jeq0ZK143VR5DuMPdqr/bqvJa/KJl9L27az5QDHNzw0V1WhF8W70uMB5cyaVw/lFVzfynS2n593xYrCPpKE4Pp8wRUiKH8WkO6xvwdc+31Ts9uDhv8BSdb/DxFcygvmtLCZlUJe6TRhCA/clvOfc5BGDrZIs0Gxjz6ftvt9panxRZEJRF3XIyCcO16zuGUCTrVe3q3SF6XUvye6iBdDGUSyt+KWm0NAoY1+juB2v+4xylq/GtdRxqgzcZHCRvZrgkcMlG1uuDJzLZ3LM0f5vqR1s8In7ZOAVOFyldFh9DzZ3b/Ufy0HuIR2pH8sT0M+uYAxO4Dm4j5DXaienYiaeuiO9fn4ByQqCnYxmmRnl2kd3BHcaGZUpkTIpn0Iqgo5/WFn00N4cHUlmj6H/sKD+mKdP1a/zLU97DTzlHaUEOcae6wgiw6ucJIzVvqGF7uxHPi+pb/zT3E1c22O6hrlESAAh2yOgrukeurIb3JTzqc=
