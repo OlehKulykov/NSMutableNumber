@@ -46,8 +46,7 @@
 #define NSMNumberCType_NSInteger 14
 #define NSMNumberCType_NSUInteger 15
 
-FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeFromEncoded(const char * type)
-{
+FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeFromEncoded(const char * type) {
 	const NSUInteger t = *(const uint16_t*)type; /// can't hardcode @encode result, just use in runtime.
 	if (t == *(const uint16_t*)@encode(int)) return NSMNumberCType_int;
 	else if (t == *(const uint16_t*)@encode(BOOL)) return NSMNumberCType_BOOL;
@@ -67,10 +66,8 @@ FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeFromEncoded(const char * type)
 	return 0;
 }
 
-FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsUnsigned(const NSUInteger type)
-{
-	switch (type)
-	{
+FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsUnsigned(const NSUInteger type) {
+	switch (type) {
 		case NSMNumberCType_unsigned_long_long:
 		case NSMNumberCType_unsigned_char:
 		case NSMNumberCType_unsigned_short:
@@ -84,10 +81,8 @@ FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsUnsigned(const NSUInteger ty
 	return 0;
 }
 
-FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsReal(const NSUInteger type)
-{
-	switch (type)
-	{
+FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsReal(const NSUInteger type) {
+	switch (type) {
 		case NSMNumberCType_float:
 		case NSMNumberCType_double:
 			return 1;
@@ -97,28 +92,22 @@ FOUNDATION_STATIC_INLINE NSUInteger NSMNumberCTypeIsReal(const NSUInteger type)
 	return 0;
 }
 
-class NSMPCNumber
-{
+class NSMPCNumber {
 public:
-	union // data
-	{
+	union { // data
 		double r;
 		int64_t i;
 		uint64_t u;
 		BOOL b;
 	} data;
 
-	union // service info
-	{
-		struct
-		{
-			union // objCtype
-			{
+	union { // service info
+		struct {
+			union { // objCtype
 				int8_t type[2];
 				uint16_t typeValue;
 			};
-			union // value type
-			{
+			union { // value type
 				uint8_t reserved[2];
 				uint16_t reservedValue;
 			};
@@ -126,8 +115,7 @@ public:
 		uint32_t serviceInfo;
 	};
 
-	void copyDataToNumber(NSMPCNumber * number)
-	{
+	void copyDataToNumber(NSMPCNumber * number) {
 		number->data = data;
 		number->typeValue = typeValue;
 		number->reservedValue = reservedValue;
@@ -135,32 +123,33 @@ public:
 	}
 
 	pthread_mutex_t _mutex;
-	void lock() { pthread_mutex_lock(&_mutex); }
-	void unlock() { pthread_mutex_unlock(&_mutex); }
+	
+	void lock() {
+		pthread_mutex_lock(&_mutex);
+	}
+	
+	void unlock() {
+		pthread_mutex_unlock(&_mutex);
+	}
 
-	NSMPCNumber()
-	{
+	NSMPCNumber() {
 		pthread_mutexattr_t attr;
-		if (pthread_mutexattr_init(&attr) == 0)
-		{
+		if (pthread_mutexattr_init(&attr) == 0) {
 			if (pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE) == 0) pthread_mutex_init(&_mutex, &attr);
 			pthread_mutexattr_destroy(&attr);
 		}
 	}
 
-	~NSMPCNumber()
-	{
+	~NSMPCNumber() {
 		pthread_mutex_destroy(&_mutex);
 	}
 
 	const char * objCtype() const { return (const char*)type; }
 
-	template<typename T> T get()
-	{
+	template<typename T> T get() {
 		T r = 0;
 		lock();
-		switch (reserved[1])
-		{
+		switch (reserved[1]) {
 			case NSMNumberValueTypeU: r = (T)data.u; break;
 			case NSMNumberValueTypeI: r = (T)data.i; break;
 			case NSMNumberValueTypeR: r = (T)data.r; break;
@@ -170,14 +159,12 @@ public:
 		return r;
 	}
 
-	template<typename T> void set(const T & value, const uint8_t type)
-	{
+	template<typename T> void set(const T & value, const uint8_t type) {
 		lock();
 		reserved[0] = sizeof(T);
 		reserved[1] = type;
 		typeValue = *(const uint16_t*)@encode(T);
-		switch (type)
-		{
+		switch (type) {
 			case NSMNumberValueTypeU: data.u = value;  break;
 			case NSMNumberValueTypeI: data.i = value;  break;
 			case NSMNumberValueTypeR: data.r = value;  break;
@@ -186,15 +173,11 @@ public:
 		unlock();
 	}
 
-	void getValue(void * value)
-	{
+	void getValue(void * value) {
 		lock();
-		switch (reserved[1])
-		{
-			case NSMNumberValueTypeU:
-			{
-				switch (reserved[0])
-				{
+		switch (reserved[1]) {
+			case NSMNumberValueTypeU: {
+				switch (reserved[0]) {
 					case sizeof(uint8_t): *(uint8_t*)value = this->get<uint8_t>(); break;
 					case sizeof(uint16_t): *(uint16_t*)value = this->get<uint16_t>(); break;
 					case sizeof(uint32_t): *(uint32_t*)value = this->get<uint32_t>(); break;
@@ -202,10 +185,8 @@ public:
 					default: break;
 				}
 			} break;
-			case NSMNumberValueTypeI:
-			{
-				switch (reserved[0])
-				{
+			case NSMNumberValueTypeI: {
+				switch (reserved[0]) {
 					case sizeof(int8_t): *(int8_t*)value = this->get<int8_t>(); break;
 					case sizeof(int16_t): *(int16_t*)value = this->get<int16_t>(); break;
 					case sizeof(int32_t): *(int32_t*)value = this->get<int32_t>(); break;
@@ -213,10 +194,8 @@ public:
 					default: break;
 				}
 			} break;
-			case NSMNumberValueTypeR:
-			{
-				switch (reserved[0])
-				{
+			case NSMNumberValueTypeR: {
+				switch (reserved[0]) {
 					case sizeof(float): *(float*)value = this->get<float>(); break;
 					case sizeof(double): *(double*)value = this->get<double>(); break;
 					default: break;
@@ -227,11 +206,9 @@ public:
 		unlock();
 	}
 
-	void copyToString(char * buff, const size_t buffLen)
-	{
+	void copyToString(char * buff, const size_t buffLen) {
 		lock();
-		switch (reserved[1])
-		{
+		switch (reserved[1]) {
 			case NSMNumberValueTypeI: snprintf(buff, buffLen, "%lli", data.i); break;
 			case NSMNumberValueTypeU: snprintf(buff, buffLen, "%llu", data.u); break;
 			case NSMNumberValueTypeR:
@@ -243,14 +220,16 @@ public:
 		unlock();
 	}
 
-	BOOL isUnsigned() const { return (reserved[1] == NSMNumberValueTypeU); }
+	BOOL isUnsigned() const {
+		return (reserved[1] == NSMNumberValueTypeU);
+	}
 
-	BOOL isReal() const { return (reserved[1] == NSMNumberValueTypeR); }
+	BOOL isReal() const {
+		return (reserved[1] == NSMNumberValueTypeR);
+	}
 
-	void setWithBytesAndObjCType(const void * value, const char * type)
-	{
-		switch (NSMNumberCTypeFromEncoded(type))
-		{
+	void setWithBytesAndObjCType(const void * value, const char * type) {
+		switch (NSMNumberCTypeFromEncoded(type)) {
 			case NSMNumberCType_int: this->set<int>(*(const int*)value, NSMNumberValueTypeI); break;
 			case NSMNumberCType_char: this->set<char>(*(const char*)value, NSMNumberValueTypeI); break;
 			case NSMNumberCType_double: this->set<double>(*(const double*)value, NSMNumberValueTypeR); break;
